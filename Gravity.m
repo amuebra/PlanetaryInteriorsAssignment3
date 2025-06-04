@@ -3,11 +3,11 @@
 % -------------------------------------------------------------------------
 % PARAMETERS
 % -------------------------------------------------------------------------
-filename = 'ggmes_100v08_sha.tab';  % Path to SHA file
-lmax = 100;                         % Maximum degree/order
+filename = 'ggmes_20v04_sha.tab';  % Path to SHA file
+lmax = 20;                         % Maximum degree/order
 R_ref = 2439.4;                     % Reference radius (km)
 GM = 22031.8150000000;              % Mercury GM (km^3/s^2)
-resolution = 16;                     % degrees (1 = 1x1°, 4 = 0.25°)
+resolution = 1;                     % degrees (1 = 1x1°, 4 = 0.25°)
 
 % -------------------------------------------------------------------------
 % READ COEFFICIENTS
@@ -45,7 +45,7 @@ end
 % -------------------------------------------------------------------------
 % LAT/LON GRID (user-defined resolution)
 % -------------------------------------------------------------------------
-latitudes = -90 : 1/resolution : 90;
+latitudes = 90 : -1/resolution : -90;  % now from North to South
 latitudes = latitudes(1:end-1);  % remove duplicate 90
 longitudes = -180 : 1/resolution : 180;
 longitudes = longitudes(1:end-1); % remove duplicate 180
@@ -65,7 +65,7 @@ for l = 0:lmax
         P_lm = squeeze(Plm_all(m+1, :));         % 1 x nlat
         P_grid = repmat(P_lm', 1, length(phi));  % nlat x nlon
 
-        delta_g = delta_g - (l + 1) * (R_ref / R_ref)^(l + 2) * P_grid .* ...
+        delta_g = delta_g + (l + 1)* (R_ref / R_ref)^(l + 2) * P_grid .* ...
             (Clm_mat(l+1, m+1) * cos(m * phi_grid) + ...
              Slm_mat(l+1, m+1) * sin(m * phi_grid));
     end
@@ -78,11 +78,45 @@ delta_g_mGal = delta_g_kms2 * 1e8;  % 1 km/s^2 = 1e8 mGal
 % -------------------------------------------------------------------------
 % PLOT GRAVITY MAP
 % -------------------------------------------------------------------------
+ % figure;
+ % imagesc(longitudes, latitudes, delta_g_mGal);
+ % axis xy;
+ % colorbar;
+ % title('Mercury Gravity Anomaly from MESSENGER (mGal)');
+ % xlabel('Longitude (°)');
+ % ylabel('Latitude (°)');
+ % colormap jet;
+
+% % Assume you have delta_g [nlat x nlon], theta [1 x nlat], phi [1 x nlon]
+% 
+% Convert colatitude (theta) to latitude
+lat = 90 - rad2deg(theta);  % latitude in degrees
+lon = rad2deg(phi);         % longitude in degrees
+
+% Ensure longitude is 0–360, then wrap to -180 to 180 for plotting
+lon_wrapped = mod(lon + 180, 360) - 180;
+
+% Sort longitudes so that they are in increasing order (-180 to 180)
+[lon_sorted, idx] = sort(lon_wrapped);
+delta_g_sorted = delta_g(:, idx);
+
+% Create meshgrid for mapping
+[lon_grid, lat_grid] = meshgrid(lon_sorted, lat);
+
+% Plot using Mapping Toolbox
 figure;
-imagesc(longitudes, latitudes, delta_g_mGal);
-axis xy;
+axesm ('mollweid', 'Frame', 'on', 'Grid', 'on', ...
+       'Origin', [0 180 0], ...      % Central meridian at 180°E
+       'MapLatLimit', [-90 90], ...
+       'MapLonLimit', [-180 180]);
+
+% Use surfm or pcolorm to plot
+pcolorm(lat_grid, lon_grid, delta_g_sorted);
+
+% Add coastlines if needed
+%coast = load('coastlines');
+%plotm(coast.coastlat, coast.coastlon, 'k');
+
+% Add colorbar and title
 colorbar;
-title('Mercury Gravity Anomaly from MESSENGER (mGal)');
-xlabel('Longitude (°)');
-ylabel('Latitude (°)');
-colormap jet;
+title('Gravity Anomaly (m/s^2 or mGal) - Mollweide Projection');
