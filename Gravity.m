@@ -4,7 +4,7 @@
 % PARAMETERS
 % -------------------------------------------------------------------------
 filename = 'ggmes_20v04_sha.tab';  % Path to SHA file
-lmax = 20;                         % Maximum degree/order
+lmax = 100;                         % Maximum degree/order
 R_ref = 2439.4;                     % Reference radius (km)
 GM = 22031.8150000000;              % Mercury GM (km^3/s^2)
 resolution = 1;                     % degrees (1 = 1x1°, 4 = 0.25°)
@@ -89,34 +89,39 @@ delta_g_mGal = delta_g_kms2 * 1e8;  % 1 km/s^2 = 1e8 mGal
 
 % % Assume you have delta_g [nlat x nlon], theta [1 x nlat], phi [1 x nlon]
 % 
-% Convert colatitude (theta) to latitude
-lat = 90 - rad2deg(theta);  % latitude in degrees
-lon = rad2deg(phi);         % longitude in degrees
+% Convert colatitude to latitude
+lat = 90 - rad2deg(theta);     % [nlat x 1]
+lon = rad2deg(phi);            % [1 x nlon]
 
-% Ensure longitude is 0–360, then wrap to -180 to 180 for plotting
-lon_wrapped = mod(lon + 180, 360) - 180;
+% --- Shift longitudes so 180°E is at center (rotate planet)
+% 1. Wrap longitudes to [0, 360)
+lon_360 = mod(lon, 360);
 
-% Sort longitudes so that they are in increasing order (-180 to 180)
-[lon_sorted, idx] = sort(lon_wrapped);
-delta_g_sorted = delta_g(:, idx);
+% 2. Rotate so that 180° is at center => shift by 180°
+[~, idx_180] = min(abs(lon_360 - 180));
+lon_rotated = [lon_360(idx_180:end), lon_360(1:idx_180-1)];
+delta_g_rotated = [delta_g(:, idx_180:end), delta_g(:, 1:idx_180-1)];
 
-% Create meshgrid for mapping
-[lon_grid, lat_grid] = meshgrid(lon_sorted, lat);
+% 3. Convert to [-180, 180)
+lon_wrapped = mod(lon_rotated + 180, 360) - 180;
 
-% Plot using Mapping Toolbox
-figure;
-axesm ('mollweid', 'Frame', 'on', 'Grid', 'on', ...
-       'Origin', [0 180 0], ...      % Central meridian at 180°E
-       'MapLatLimit', [-90 90], ...
-       'MapLonLimit', [-180 180]);
+% 4. Meshgrid
+[lon_grid, lat_grid] = meshgrid(lon_wrapped, lat);
 
-% Use surfm or pcolorm to plot
-pcolorm(lat_grid, lon_grid, delta_g_sorted);
+%% --- Plot
+fig = figure;
+axesm('mollweid', ...
+      'Frame', 'on', ...
+      'Grid', 'on', ...
+      'Origin', [0 0 0], ...   % CENTER AT 0°E!
+      'MapLatLimit', [-90 90], ...
+      'MapLonLimit', [-180 180]);
 
-% Add coastlines if needed
-%coast = load('coastlines');
-%plotm(coast.coastlat, coast.coastlon, 'k');
+pcolorm(lat_grid, lon_grid, delta_g_rotated);
 
-% Add colorbar and title
-colorbar;
-title('Gravity Anomaly (m/s^2 or mGal) - Mollweide Projection');
+c = colorbar;
+c.Label.Interpreter = 'latex';
+%title('Mercury Gravity Anomaly (mGal) - Mollweide Projection');
+colormap(jet);
+%saveas(fig, 'Figures/MollwideProjection_MercuryGravityAnomaly.pdf')
+%saveas(fig, 'Figures/MollwideProjection_MercuryGravityAnomaly.svg')
