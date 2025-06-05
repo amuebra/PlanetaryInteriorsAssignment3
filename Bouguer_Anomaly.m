@@ -60,10 +60,10 @@ elevations = multiplier * double(data);
 % -------------------------------------------------------------------------
 %% LAT/LON GRID (user-defined resolution)
 % -------------------------------------------------------------------------
-latitudes = 90 : -1/resolution : -90;  % now from North to South
-latitudes = latitudes(1:end-1);  % remove duplicate 90
+latitudes = -90 : 1/resolution : 90;  % now from South to North
+latitudes = latitudes(1:end-1);       % remove duplicate 90
 longitudes = -180 : 1/resolution : 180;
-longitudes = longitudes(1:end-1); % remove duplicate 180
+longitudes = longitudes(1:end-1);     % remove duplicate 180
 
 theta = deg2rad(90 - latitudes);      % colatitude in radians
 phi = deg2rad(longitudes);            % longitude in radians
@@ -75,20 +75,23 @@ phi = deg2rad(longitudes);            % longitude in radians
 delta_g = zeros(size(theta_grid));  % gravity anomaly in km/s^2
 
 for l = 0:lmax
-    Plm_all = legendre(l, cos(theta), 'norm');  % normalized, (m+1 x nlat)
+    Plm_all = zeros(l+1, length(theta));  % Precompute Plm for each theta
+    for i = 1:length(theta)
+        Plm_temp = legendre(l, cos(theta(i)), 'norm');
+        Plm_all(:, i) = Plm_temp(:);
+    end
     for m = 0:l
-        P_lm = squeeze(Plm_all(m+1, :));         % 1 x nlat
-        P_grid = repmat(P_lm', 1, length(phi));  % nlat x nlon
+        P_lm = squeeze(Plm_all(m+1, :));
+        P_grid = repmat(P_lm', 1, length(phi));
 
         delta_g = delta_g + (l + 1)* (R_ref / R_ref)^(l + 2) * P_grid .* ...
             (Clm_mat(l+1, m+1) * cos(m * phi_grid) + ...
              Slm_mat(l+1, m+1) * sin(m * phi_grid));
     end
 end
-
 % Scale and convert to mGal
-deltag_kms2 = GM / R_ref^2 * delta_g;
-deltag_mGal = deltag_kms2 * 1e8;  % 1 km/s^2 = 1e8 mGal
+delta_g_kms2 = GM / R_ref^2 * delta_g;
+delta_g_mGal = delta_g_kms2 * 1e8;  % 1 km/s^2 = 1e8 mGal
 
 % -------------------------------------------------------------------------
 %% CALCULATE BOUGUER ANOMALY
