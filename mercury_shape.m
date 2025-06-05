@@ -6,7 +6,7 @@ clc
 %% load data
 % load('Data/acton.mat')
 data = read(Tiff('Mercury_Messenger_USGS_DEM_Global_665m_v2.tif'));
-data2 = read(Tiff('MercuryMessengerUSGS_MAP2_EQUI.tif'));
+%data2 = read(Tiff('MercuryMessengerUSGS_MAP2_EQUI.tif'));
 
 %% processing
 resolution = 64;
@@ -26,3 +26,4 @@ colorbar
 %% analysis
 disp(max(max(data./2)))
 disp(min(min(data./2)))
+save('elevations.mat', 'elevations');
