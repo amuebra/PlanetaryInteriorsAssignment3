@@ -7,7 +7,9 @@ filename = 'ggmes_100v08_sha.tab';  % Path to SHA file
 lmax = 100;                         % Maximum degree/order
 R_ref = 2439.4;                     % Reference radius (km)
 GM = 22031.8150000000;              % Mercury GM (km^3/s^2)
-resolution = 1;                     % degrees (1 = 1x1°, 4 = 0.25x0.25°)
+G = 6.6743e-11;                     % gravitational constant
+rho_crust = 2800;                   % crust density
+resolution = 4;                     % degrees (1 = 1x1°, 4 = 0.25x0.25°)
 
 % -------------------------------------------------------------------------
 %% READ COEFFICIENTS
@@ -46,15 +48,14 @@ end
 %% READ TOPOGRAPHY DATA
 % -------------------------------------------------------------------------
 data = read(Tiff('Mercury_Messenger_USGS_DEM_Global_665m_v2.tif'));
-
-resolution = 1;
-latitudes = -90 : 1/resolution : 90;
-latitudes = latitudes(1:end-1);
-longitudes = -180 : 1/resolution : 180;
-longitudes = longitudes(1:end-1);
-
 multiplier = 0.5;
 elevations = multiplier * double(data);
+
+% resolution = 1;
+% latitudes = -90 : 1/resolution : 90;
+% latitudes = latitudes(1:end-1);
+% longitudes = -180 : 1/resolution : 180;
+% longitudes = longitudes(1:end-1);
 
 % -------------------------------------------------------------------------
 %% LAT/LON GRID (user-defined resolution)
@@ -87,7 +88,7 @@ end
 
 % Scale and convert to mGal
 deltag_kms2 = GM / R_ref^2 * delta_g;
-deltag_mGal = delta_g_kms2 * 1e8;  % 1 km/s^2 = 1e8 mGal
+deltag_mGal = deltag_kms2 * 1e8;  % 1 km/s^2 = 1e8 mGal
 
 % -------------------------------------------------------------------------
 %% CALCULATE BOUGUER ANOMALY
