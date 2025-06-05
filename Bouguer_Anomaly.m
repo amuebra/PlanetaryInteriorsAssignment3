@@ -121,3 +121,10 @@ colorbar
 figure;
 imagesc(longitudes, latitudes, BA)
 colorbar
+
+% -------------------------------------------------------------------------
+%% SAVING MAPS
+% -------------------------------------------------------------------------
+save('deltag_mGal.mat', 'deltag_mGal')
+save('deltag_b_mGal.mat', 'deltag_b_mGal')
+save('BA.mat', 'BA')
