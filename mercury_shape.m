@@ -21,8 +21,8 @@ longitudes = longitudes(1:end-1);
 multiplier = 0.5;
 elevations = multiplier * double(data);
 
-%% calculate Bouguer anomaly
-deltag_b = 2*pi*G*rho_crust*elevations;
+%% calculate Bouguer correction
+deltag_b = 2*pi*G*rho_crust*elevations; % Bouguer correction
 
 %% plotting
 % topography = elevations/1000;
