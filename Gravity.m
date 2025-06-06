@@ -1,9 +1,16 @@
 % Mercury Gravity Anomaly Map from MESSENGER SHADR file
 
+clear;
+close all;
+clc;
+
+HOME = pwd;
+addpath([HOME '/Data']);
+addpath([HOME '/Results']);
 % -------------------------------------------------------------------------
 % PARAMETERS
 % -------------------------------------------------------------------------
-filename = 'ggmes_20v04_sha.tab';  % Path to SHA file
+filename = [HOME '/Data/ggmes_20v04_sha.tab'];  % Path to SHA file
 lmax = 100;                         % Maximum degree/order
 R_ref = 2439.4;                     % Reference radius (km)
 GM = 22031.8150000000;              % Mercury GM (km^3/s^2)
