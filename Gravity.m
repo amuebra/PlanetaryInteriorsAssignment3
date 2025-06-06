@@ -10,7 +10,7 @@ addpath([HOME '/Results']);
 % -------------------------------------------------------------------------
 % PARAMETERS
 % -------------------------------------------------------------------------
-filename = [HOME '/Data/ggmes_20v04_sha.tab'];  % Path to SHA file
+filename = [HOME '/Data/ggmes_100v08_sha.tab'];  % Path to SHA file
 lmax = 100;                         % Maximum degree/order
 R_ref = 2439.4;                     % Reference radius (km)
 GM = 22031.8150000000;              % Mercury GM (km^3/s^2)
@@ -108,6 +108,7 @@ lon_360 = mod(lon, 360);
 [~, idx_180] = min(abs(lon_360 - 180));
 lon_rotated = [lon_360(idx_180:end), lon_360(1:idx_180-1)];
 delta_g_rotated = [delta_g(:, idx_180:end), delta_g(:, 1:idx_180-1)];
+delta_g_mGal_rot = delta_g_rotated*1e6/2;
 
 % 3. Convert to [-180, 180)
 lon_wrapped = mod(lon_rotated + 180, 360) - 180;
@@ -124,11 +125,27 @@ axesm('mollweid', ...
       'MapLatLimit', [-90 90], ...
       'MapLonLimit', [-180 180]);
 
-pcolorm(lat_grid, lon_grid, delta_g_rotated);
+pcolorm(lat_grid, lon_grid, delta_g_mGal_rot);
 
 c = colorbar;
+c.Label.String = 'mGal';
+c.Label.FontSize = 14;
 c.Label.Interpreter = 'latex';
+
 %title('Mercury Gravity Anomaly (mGal) - Mollweide Projection');
 colormap(jet);
+
+% setm(gca, ...
+%     'ParallelLabel', 'on', ...
+%     'MeridianLabel', 'on', ...
+%     'PLabelLocation', -60:30:60, ...          % latitude label ticks from -60 to 60
+%     'MLabelLocation', [-180 0 180], ...       % longitude label ticks at center and edges
+%     'PLabelMeridian', 180, ...                 % latitude labels on right edge (180° longitude)
+%     'LabelRotation', 'on', ...
+%     'FontSize', 12, ...
+%     'Grid', 'on', ...
+%     'Frame', 'on',...
+%     'ParallelLabel', 'on', ...
+%     'MeridianLabel', 'on');
 %saveas(fig, 'Figures/MollwideProjection_MercuryGravityAnomaly.pdf')
 %saveas(fig, 'Figures/MollwideProjection_MercuryGravityAnomaly.svg')
