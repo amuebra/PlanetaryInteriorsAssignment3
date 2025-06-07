@@ -1,8 +1,17 @@
+clear;
+close all;
+clc;
+
+HOME = pwd;
+addpath([HOME '/Data']);
+addpath([HOME '/Results']);
+
 % Iterative Bouguer Inversion to Determine Crustal Deviations (Δr)
 % Requires gravity anomaly in gravity.m as `gravity_anomaly`
 
 % Load gravity anomaly data
-run('Gravity.m');  % should define gravity_anomaly (in mGal)
+%run('Gravity.m');  % should define gravity_anomaly (in mGal)
+load([HOME '/Results/r4_delta_g_mGal.mat'], 'delta_g_mGal')
 
 % === Parameters ===
 D = 40e3;             % Average crustal thickness (m)
@@ -54,7 +63,7 @@ end
 % xlabel('X'); ylabel('Y');
 % 
 % % Optional: Save result
-% save('crust_thickness_iterative.mat', 'crust_thickness');
+% save([HOME '/Results/crust_thickness_iterative.mat'], 'crust_thickness');
 
 %% --- Plot
 fig = figure;

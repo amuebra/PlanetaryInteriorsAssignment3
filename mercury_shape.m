@@ -3,9 +3,12 @@ clear
 close all
 clc
 
+HOME = pwd;
+addpath([HOME '/Data']);
+addpath([HOME '/Results']);
 %% load data
 % load('Data/acton.mat')
-data = read(Tiff('Mercury_Messenger_USGS_DEM_Global_665m_v2.tif'));
+data = read(Tiff([HOME '/Data/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif']));
 %data2 = read(Tiff('MercuryMessengerUSGS_MAP2_EQUI.tif'));
 
 %% processing
@@ -26,4 +29,4 @@ colorbar
 %% analysis
 disp(max(max(data./2)))
 disp(min(min(data./2)))
-save('elevations.mat', 'elevations');
+save([HOME '/Results/elevations.mat'], 'elevations');
