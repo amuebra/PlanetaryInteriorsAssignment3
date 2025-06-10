@@ -30,16 +30,18 @@ r_continent = h .* (rho_crust / (rho_mantle - rho_crust));
 crust_thickness = D + r_continent;
 
 %% --- Plot the results ---
+aa =18;
 figure;
-imagesc(longitudes, latitudes, crust_thickness);  % Automatically scales axes
-set(gca, 'YDir', 'normal');          % Flip Y so North is up
-xlabel('Longitude (°E)');
-ylabel('Latitude (°)');
-title('Mercury Crustal Thickness from Airy Isostasy');
-colorbar;
-colormap(jet);
+imagesc(longitudes, latitudes, crust_thickness./1e3);  % Automatically scales axes
+set(gca, 'YDir', 'normal','Fontsize', aa);          % Flip Y so North is up
+xlabel('Longitude (°E)', 'Interpreter', 'latex', 'Fontsize', aa);
+ylabel('Latitude (°)', 'Interpreter', 'latex', 'Fontsize', aa);
+%title('Mercury Crustal Thickness from Airy Isostasy');
+c = colorbar;
+ylabel(c, 'Airy Crust Thickness (km)', 'Interpreter', 'latex', 'Fontsize', aa);
+c = colormap(jet);
 axis equal tight;
 
 % --- Optional: Save results ---
-save([HOME '/Results/Airy_r_contintent.mat'], 'r_continent', 'longitudes', 'latitudes');
+%save([HOME '/Results/Airy_r_contintent.mat'], 'r_continent', 'longitudes', 'latitudes');
 save([HOME '/Results/Airy_thickness.mat'], 'crust_thickness', 'longitudes', 'latitudes');

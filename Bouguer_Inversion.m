@@ -11,7 +11,9 @@ addpath([HOME '/Results']);
 
 % Load gravity anomaly data
 %run('Gravity.m');  % should define gravity_anomaly (in mGal)
-load([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal')
+load([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal', 'latT', 'lonT')
+longitudes = lonT;
+latitudes = latT;
 
 % === Parameters ===
 D = 40e3;             % Average crustal thickness (m)
@@ -57,26 +59,27 @@ for iter = 1:max_iter
 end
 
 % === Plot Final Model ===
-% figure;
-% imagesc(crust_thickness); colorbar;
-% title('Estimated Crustal Thickness (m)');
-% xlabel('X'); ylabel('Y');
+figure;
+imagesc(crust_thickness); colorbar;
+title('Estimated Crustal Thickness (m)');
+xlabel('Longitude'); ylabel('Latitude');
+set(gca, 'YDir', 'normal');
 % 
 % % Optional: Save result
 % save([HOME '/Results/crust_thickness_iterative.mat'], 'crust_thickness');
 
 %% --- Plot
-fig = figure;
-axesm('mollweid', ...
-      'Frame', 'on', ...
-      'Grid', 'on', ...
-      'Origin', [0 0 0], ...   % CENTER AT 0°E!
-      'MapLatLimit', [-90 90], ...
-      'MapLonLimit', [-180 180]);
-
-pcolorm(lat_grid, lon_grid, crust_thickness);
-
-c = colorbar;
-c.Label.Interpreter = 'latex';
-%title('Mercury Gravity Anomaly (mGal) - Mollweide Projection');
-colormap(jet);
+% fig = figure;
+% axesm('mollweid', ...
+%       'Frame', 'on', ...
+%       'Grid', 'on', ...
+%       'Origin', [0 0 0], ...   % CENTER AT 0°E!
+%       'MapLatLimit', [-90 90], ...
+%       'MapLonLimit', [-180 180]);
+% 
+% pcolorm(longitudes, latitudes, crust_thickness);
+% 
+% c = colorbar;
+% c.Label.Interpreter = 'latex';
+% %title('Mercury Gravity Anomaly (mGal) - Mollweide Projection');
+% colormap(jet);
