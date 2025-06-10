@@ -36,4 +36,4 @@ disp(max(max(data./2)))
 disp(min(min(data./2)))
 
 elevations = downsize_mean(elevations, 64);
-save([HOME '/Results/elevations.mat'], 'elevations');
+save([HOME '/Results/elevations.mat'], 'elevations', 'longitudes', 'latitudes');
