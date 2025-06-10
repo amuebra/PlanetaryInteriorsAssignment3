@@ -107,8 +107,8 @@ lon_360 = mod(lon, 360);
 % 2. Rotate so that 180° is at center => shift by 180°
 [~, idx_180] = min(abs(lon_360 - 180));
 lon_rotated = [lon_360(idx_180:end), lon_360(1:idx_180-1)];
-delta_g_rotated = [delta_g(:, idx_180:end), delta_g(:, 1:idx_180-1)];
-delta_g_mGal_rot = delta_g_rotated*1e6/2;
+delta_g_rotated = [delta_g_mGal(:, idx_180:end), delta_g_mGal(:, 1:idx_180-1)];
+%delta_g_mGal_rot = delta_g_rotated*1e6/2;
 
 % 3. Convert to [-180, 180)
 lon_wrapped = mod(lon_rotated + 180, 360) - 180;
@@ -125,12 +125,13 @@ axesm('mollweid', ...
       'MapLatLimit', [-90 90], ...
       'MapLonLimit', [-180 180]);
 
-pcolorm(lat_grid, lon_grid, delta_g_mGal_rot);
+pcolorm(lat_grid, lon_grid, delta_g_rotated);
 
 c = colorbar;
 c.Label.String = 'mGal';
 c.Label.FontSize = 14;
 c.Label.Interpreter = 'latex';
+clim([-160 120]);
 
 %title('Mercury Gravity Anomaly (mGal) - Mollweide Projection');
 colormap(jet);
@@ -149,3 +150,15 @@ colormap(jet);
 %     'MeridianLabel', 'on');
 %saveas(fig, 'Figures/MollwideProjection_MercuryGravityAnomaly.pdf')
 %saveas(fig, 'Figures/MollwideProjection_MercuryGravityAnomaly.svg')
+
+%% Save data
+% Convert colatitude to latitude
+lat = 90 - rad2deg(theta);     % originally from North to South
+lon = rad2deg(phi);            % [-180 to 180)
+
+% Flip latitude to go from South to North (match DEM)
+delta_g_mGal = flipud(delta_g_mGal);  % match topography orientation
+lat = fliplr(lat);  % flip latitudes accordingly
+
+% Save gravity anomaly with same orientation as topography
+save([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal', 'lat', 'lon');
