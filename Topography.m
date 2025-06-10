@@ -36,6 +36,6 @@ set(gca, 'ytick', -90:30:90);
 %disp(min(min(data./2)))
 
 elevations = downsize_mean(elevations, 64);
-longitudes = downsize_mean(longitudes(), 64);
+longitudes = downsize_mean(longitudes, 64);
 latitudes = downsize_mean(latitudes, 64);
 save([HOME '/Results/elevations.mat'], 'elevations', 'longitudes', 'latitudes');
