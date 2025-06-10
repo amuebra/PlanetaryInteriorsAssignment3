@@ -1,5 +1,14 @@
 % Mercury Gravity Anomaly Map from MESSENGER SHADR file
 
+clear
+close all
+clc
+
+HOME = pwd;
+addpath([HOME '/Data']);
+addpath([HOME '/Results']);
+addpath([HOME '/Tools']);
+
 % -------------------------------------------------------------------------
 %% PARAMETERS
 % -------------------------------------------------------------------------
@@ -91,7 +100,7 @@ for l = 0:lmax
 end
 % Scale and convert to mGal
 delta_g_kms2 = GM / R_ref^2 * delta_g;
-delta_g_mGal = delta_g_kms2 * 1e8;  % 1 km/s^2 = 1e8 mGal
+deltag_mGal = delta_g_kms2 * 1e8;  % 1 km/s^2 = 1e8 mGal
 
 % -------------------------------------------------------------------------
 %% CALCULATE BOUGUER ANOMALY
@@ -99,14 +108,20 @@ delta_g_mGal = delta_g_kms2 * 1e8;  % 1 km/s^2 = 1e8 mGal
 deltag_b = 2*pi*G*rho_crust*elevations; % Bouguer correction
 deltag_b_mGal = deltag_b * 1e5; % 1 m/s^2 = 1e5 mGal
 scaling_factor = size(deltag_b_mGal,1)/size(deltag_mGal,1);
-[a, b] = size(deltag_b_mGal);
-if mod(a, scaling_factor) ~= 0 || mod(b, scaling_factor) ~= 0
-    error('Matrix dimensions must be divisible by the reduction factor.');
-end
 
-% Reshape and average to reduce size of deltag_b
-deltag_b_mGal = mean(reshape(deltag_b_mGal, scaling_factor, a/scaling_factor, scaling_factor, b/scaling_factor), [1 3]);
-deltag_b_mGal = squeeze(deltag_b_mGal);
+% 
+% 
+% [a, b] = size(deltag_b_mGal);
+% if mod(a, scaling_factor) ~= 0 || mod(b, scaling_factor) ~= 0
+%     error('Matrix dimensions must be divisible by the reduction factor.');
+% end
+% 
+% % Reshape and average to reduce size of deltag_b
+% deltag_b_mGal = mean(reshape(deltag_b_mGal, scaling_factor, a/scaling_factor, scaling_factor, b/scaling_factor), [1 3]);
+% deltag_b_mGal = squeeze(deltag_b_mGal);
+
+deltag_b_mGal = downsize_mean(deltag_b_mGal, scaling_factor);
+
 BA = deltag_mGal - deltag_b_mGal; % Bouguer Anomaly in mGal
 
 % -------------------------------------------------------------------------

@@ -19,7 +19,7 @@ longitudes = -180 : 1/resolution : 180;
 longitudes = longitudes(1:end-1);
 
 multiplier = 0.5;
-elevations = multiplier * data;
+elevations = multiplier * double(data);
 
 %% plotting
 imagesc(longitudes, latitudes, elevations)
