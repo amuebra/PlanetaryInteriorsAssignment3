@@ -5,10 +5,11 @@ clc;
 HOME = pwd;
 addpath([HOME '/Data']);
 addpath([HOME '/Results'])
+addpath([HOME '/Tools']);
 
 %% Parameters
 load([HOME '/Results/elevations.mat'], 'elevations')
-load([HOME '/Results/r4_delta_g_mGal.mat'], 'delta_g_mGal')
+load([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal', 'lat', 'lon')
 deltag_mGal = delta_g_mGal;
 lmax = 100;                         % Maximum degree/order
 R_ref = 2439.4;                     % Reference radius (km)
@@ -33,6 +34,9 @@ deltag_b_mGal = squeeze(deltag_b_mGal);
 BA = deltag_mGal - deltag_b_mGal; % Bouguer Anomaly in mGal
 
 figure;
-imagesc(longitudes, latitudes, BA)
+imagesc(lon, lat, BA)
 c = colorbar;
 c.Label.String = 'Bouguer Anomaly in mGal';
+set(gca,'YDir','normal')
+set(gca, 'ylim', [-90 90]);
+set(gca, 'ytick', -90:30:90);

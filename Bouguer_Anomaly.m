@@ -130,16 +130,25 @@ BA = deltag_mGal - deltag_b_mGal; % Bouguer Anomaly in mGal
 figure;
 imagesc(longitudes, latitudes, deltag_b_mGal)
 colorbar
+set(gca,'YDir','normal')
+set(gca, 'ylim', [-90 90]);
+set(gca, 'ytick', -90:30:90);
 figure;
 imagesc(longitudes, latitudes, deltag_mGal)
 colorbar
+set(gca,'YDir','normal')
+set(gca, 'ylim', [-90 90]);
+set(gca, 'ytick', -90:30:90);
 figure;
 imagesc(longitudes, latitudes, BA)
 colorbar
+set(gca,'YDir','normal')
+set(gca, 'ylim', [-90 90]);
+set(gca, 'ytick', -90:30:90);
 
 % -------------------------------------------------------------------------
 %% SAVING MAPS
 % -------------------------------------------------------------------------
-save('deltag_mGal.mat', 'deltag_mGal')
-save('deltag_b_mGal.mat', 'deltag_b_mGal')
-save('BA.mat', 'BA')
+% save('deltag_mGal.mat', 'deltag_mGal')
+% save('deltag_b_mGal.mat', 'deltag_b_mGal')
+% save('BA.mat', 'BA')
