@@ -25,24 +25,18 @@ V = V(V(:,1) <= maxDegree, :);
 resolution = 1;
 latLimT = [-90+(1/resolution/2) 90-(1/resolution/2) 1/resolution]; 
 %lonLimT = [1/resolution/2 360-(1/resolution/2) 1/resolution]     % 0 to 360 degree
-lonLimT = [-360/resolution/2  180-(1/resolution/2) 1/resolution]; %-180 to 180 degree
+lonLimT = [-180+(1/resolution/2) 180-(1/resolution/2) 1/resolution]; %-180 to 180 degree
 
 % Generate lat/lon grid
 lonT = lonLimT(1):lonLimT(3):lonLimT(2);
 %latT = fliplr(latLimT(1):latLimT(3):latLimT(2));
 latT = latLimT(1):latLimT(3):latLimT(2);
-% LonT = repmat(lonT, length(latT), 1);
-% LatT = repmat(latT', 1, length(lonT));
 
+%% perform computation
 % Define Model structure
 Model.Re = R_ref;
 Model.GM = GM;
-%%
-n_vals = unique(V(:,1));
-max_n = max(n_vals);
-min_n = min(n_vals);
 
-%% plot data
 % Spherical harmonic synthesis settings
 SHbounds = [1 maxDegree];
 height = 0;
@@ -51,10 +45,10 @@ height = 0;
 data = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, V, Model);
 
 % Extract gravity anomaly (in mGal)
-
 delta_g_mGal = data.vec.R * 1e5;
 
-% Plot result
+
+%% plot results
 figure
 aa = 18;
 imagesc(lonT, latT, delta_g_mGal);
@@ -63,7 +57,10 @@ ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
-
+set(gca, 'ylim', [-90 90]);
+set(gca, 'ytick', -90:30:90);
+set(gca, 'xlim', [-180 180]);
+set(gca, 'xtick', -180:30:180);
 
 %% save data
 save([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal', 'latT', 'lonT');
