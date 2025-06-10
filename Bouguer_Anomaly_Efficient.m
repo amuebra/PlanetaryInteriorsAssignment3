@@ -78,3 +78,5 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [-180 180]);
 set(gca, 'xtick', -180:30:180);
+
+% plot_map(lonT, latT, elevations, 'Elevation (m)', 18, 12);
