@@ -18,9 +18,9 @@ load([HOME '/Results/elevations.mat'], 'elevations', 'longitudes', 'latitudes') 
 % h = h(1:step:end, 1:step:end);  % Keep every 100th row and column
 
 %% --- Physical Parameters (adjust as needed) ---
-D = 29e3;            % Crustal thickness in meters (e.g., 35 km)
+D = 35e3;            % Crustal thickness in meters (e.g., 35 km)
 rho_crust = 2800;     % Crustal density (kg/m^3)
-rho_mantle = 3300;    % Mantle density (kg/m^3)
+rho_mantle = 3200;    % Mantle density (kg/m^3)
 h = elevations;
 
 %% --- Compute compensation at Moho using Airy isostasy ---
@@ -41,4 +41,5 @@ colormap(jet);
 axis equal tight;
 
 % --- Optional: Save results ---
-%save('Moho_Depth_Mercury.mat', 'r_continent');
+save([HOME '/Results/Airy_r_contintent.mat'], 'r_continent', 'longitudes', 'latitudes');
+save([HOME '/Results/Airy_thickness.mat'], 'crust_thickness', 'longitudes', 'latitudes');
