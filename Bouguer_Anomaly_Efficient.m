@@ -9,7 +9,7 @@ addpath([HOME '/Tools']);
 
 %% Parameters
 load([HOME '/Results/elevations.mat'], 'elevations')
-load([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal', 'lat', 'lon')
+load([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal', 'latT', 'lonT')
 deltag_mGal = delta_g_mGal;
 lmax = 100;                         % Maximum degree/order
 R_ref = 2439.4;                     % Reference radius (km)
@@ -32,40 +32,48 @@ BA = deltag_mGal - deltag_b_mGal; % Bouguer Anomaly in mGal
 % -------------------------------------------------------------------------
 aa = 18;
 figure;
-imagesc(lon, lat, BA)
+imagesc(lonT, latT, BA)
 c = colorbar;
-c.Label.String = 'Bouguer Anomaly in mGal';
-set(gca,'YDir','normal')
+ylabel(c, 'Bouguer Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+set(gca, 'YDir', 'normal', 'Fontsize', 12)
+xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [-180 180]);
 set(gca, 'xtick', -180:30:180);
 
 figure;
-imagesc(lon, lat, deltag_mGal)
+imagesc(lonT, latT, deltag_mGal)
 c = colorbar;
-c.Label.String = 'Gravity Anomaly in mGal';
-set(gca,'YDir','normal')
+ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+set(gca, 'YDir', 'normal', 'Fontsize', 12)
+xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [-180 180]);
 set(gca, 'xtick', -180:30:180);
 
 figure;
-imagesc(lon, lat, deltag_b_mGal)
+imagesc(lonT, latT, deltag_b_mGal)
 c = colorbar;
-c.Label.String = 'Bouguer Correction in mGal';
-set(gca,'YDir','normal')
+ylabel(c, 'Bouguer Correction (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+set(gca, 'YDir', 'normal', 'Fontsize', 12)
+xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [-180 180]);
 set(gca, 'xtick', -180:30:180);
 
 figure;
-imagesc(lon, lat, elevations)
+imagesc(lonT, latT, elevations)
 c = colorbar;
-c.Label.String = 'Elevation in m';
-set(gca,'YDir','normal')
+ylabel(c, 'Elevation (m)', 'Interpreter', 'latex', 'Fontsize', aa)
+set(gca, 'YDir', 'normal', 'Fontsize', 12)
+xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [-180 180]);
