@@ -9,12 +9,12 @@ addpath([HOME '/Results']);
 addpath([HOME '/Tools'])
 
 % Load the spherical harmonics coefficients from the file
-filename = [HOME '/Data/ggmes_100v08_sha.tab'];
+filename = [HOME '/Data/ggmes_50v06_sha.tab'];
 maxDegree = 100;
 R_ref = 2439.4e3;                     % Reference radius (m)
-GM = 22031.815e9;              % Mercury GM (km^3/s^2)
+GM = 22031.815e9;              % Mercury GM (m^3/s^2)
 coeffs = readmatrix(filename, 'FileType', 'text', 'Delimiter', ',');
-resolution = 4;
+resolution = 1;
 
 % Determine maximum degree (lmax)
 lmax = max(coeffs(:,1));  % Assuming column 1 = degree n
@@ -40,15 +40,14 @@ latLimT = [-90+(1/resolution/2) 90-(1/resolution/2) 1/resolution];
 lonLimT = [1/resolution/2  360-(1/resolution/2) 1/resolution]; 
 
 lonT = lonLimT(1):lonLimT(3):lonLimT(2);
-%latT = fliplr(latLimT(1):latLimT(3):latLimT(2));
-latT = latLimT(1):latLimT(3):latLimT(2);
+latT = fliplr(latLimT(1):latLimT(3):latLimT(2));
+%latT = latLimT(1):latLimT(3):latLimT(2);
 LonT = repmat(lonT,length(latT),1);
 LatT = repmat(latT',1,length(lonT));
 
 % Run the spherical harmonic synthesis
 f = GSHS(field, lonT, 90-latT, maxDegree);  % Output is [length(th) x length(lon)]
-delta_g_ms2 = GM / R_ref^2 * f;
-delta_g_mGal = delta_g_ms2 * 1e5;
+
 
 % Plot the result
 figure

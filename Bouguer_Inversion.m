@@ -11,7 +11,7 @@ addpath([HOME '/Results']);
 
 % Load gravity anomaly data
 %run('Gravity.m');  % should define gravity_anomaly (in mGal)
-load([HOME '/Results/r4_delta_g_mGal.mat'], 'delta_g_mGal')
+load([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal')
 
 % === Parameters ===
 D = 40e3;             % Average crustal thickness (m)

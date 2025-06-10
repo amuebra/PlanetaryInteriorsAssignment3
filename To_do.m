@@ -4,7 +4,7 @@
 
 2 Import data and compare them to literature
 %2.1 Import Topographic data
-2.2 Import Gravity Data
+%2.2 Import Gravity Data
 2.3 Construct Bouguer gravity map
 
 3 Perform Bouguer Inversion
