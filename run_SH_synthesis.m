@@ -42,7 +42,7 @@ n_vals = unique(V(:,1));
 max_n = max(n_vals);
 min_n = min(n_vals);
 
-%%
+%% plot data
 % Spherical harmonic synthesis settings
 SHbounds = [1 maxDegree];
 height = 0;
@@ -57,11 +57,13 @@ delta_g_mGal = data.vec.R * 1e5;
 % Plot result
 figure
 aa = 18;
-imagesc(lonT, latT, delta_g_mGal); cc = colorbar;
-xlabel('Longitude (\circ)', 'Fontsize', aa)
-ylabel('Latitude (\circ)', 'Fontsize', aa)
-ylabel(cc, 'Gravity Anomaly (mGal)', 'Fontsize', aa)
-set(gca, 'YDir', 'normal', 'Fontsize', aa)
+imagesc(lonT, latT, delta_g_mGal);
+c = colorbar;
+ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+set(gca, 'YDir', 'normal', 'Fontsize', 12)
+xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 
-%%
+
+%% save data
 save([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal', 'latT', 'lonT');

@@ -30,6 +30,7 @@ BA = deltag_mGal - deltag_b_mGal; % Bouguer Anomaly in mGal
 % -------------------------------------------------------------------------
 %% PLOTTING
 % -------------------------------------------------------------------------
+aa = 18;
 figure;
 imagesc(lon, lat, BA)
 c = colorbar;
@@ -37,6 +38,8 @@ c.Label.String = 'Bouguer Anomaly in mGal';
 set(gca,'YDir','normal')
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
+set(gca, 'xlim', [-180 180]);
+set(gca, 'xtick', -180:30:180);
 
 figure;
 imagesc(lon, lat, deltag_mGal)
@@ -45,6 +48,8 @@ c.Label.String = 'Gravity Anomaly in mGal';
 set(gca,'YDir','normal')
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
+set(gca, 'xlim', [-180 180]);
+set(gca, 'xtick', -180:30:180);
 
 figure;
 imagesc(lon, lat, deltag_b_mGal)
@@ -53,11 +58,15 @@ c.Label.String = 'Bouguer Correction in mGal';
 set(gca,'YDir','normal')
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
+set(gca, 'xlim', [-180 180]);
+set(gca, 'xtick', -180:30:180);
 
 figure;
 imagesc(lon, lat, elevations)
 c = colorbar;
-c.Label.String = 'elevation in m';
+c.Label.String = 'Elevation in m';
 set(gca,'YDir','normal')
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
+set(gca, 'xlim', [-180 180]);
+set(gca, 'xtick', -180:30:180);

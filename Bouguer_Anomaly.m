@@ -109,19 +109,7 @@ deltag_b = 2*pi*G*rho_crust*elevations; % Bouguer correction
 deltag_b_mGal = deltag_b * 1e5; % 1 m/s^2 = 1e5 mGal
 scaling_factor = size(deltag_b_mGal,1)/size(deltag_mGal,1);
 
-% 
-% 
-% [a, b] = size(deltag_b_mGal);
-% if mod(a, scaling_factor) ~= 0 || mod(b, scaling_factor) ~= 0
-%     error('Matrix dimensions must be divisible by the reduction factor.');
-% end
-% 
-% % Reshape and average to reduce size of deltag_b
-% deltag_b_mGal = mean(reshape(deltag_b_mGal, scaling_factor, a/scaling_factor, scaling_factor, b/scaling_factor), [1 3]);
-% deltag_b_mGal = squeeze(deltag_b_mGal);
-
 deltag_b_mGal = downsize_mean(deltag_b_mGal, scaling_factor);
-
 BA = deltag_mGal - deltag_b_mGal; % Bouguer Anomaly in mGal
 
 % -------------------------------------------------------------------------
@@ -149,6 +137,6 @@ set(gca, 'ytick', -90:30:90);
 % -------------------------------------------------------------------------
 %% SAVING MAPS
 % -------------------------------------------------------------------------
-% save('deltag_mGal.mat', 'deltag_mGal')
-% save('deltag_b_mGal.mat', 'deltag_b_mGal')
-% save('BA.mat', 'BA')
+save('deltag_mGal.mat', 'deltag_mGal')
+save('deltag_b_mGal.mat', 'deltag_b_mGal')
+save('BA.mat', 'BA')
