@@ -13,12 +13,13 @@ maxDegree = 50;
 R_ref = 2439.4e3;       % Reference radius in meters
 GM = 22031.815e9;       % Mercury GM (m^3/s^2)
 G = 6.67430e-11;        % Gravitational constant (m^3/kg/s^2)
-scaling = -0.01;
-max_iter = 1;
+scaling = -1;
+max_iter = 5;
 coeffs = readmatrix(filename, 'FileType', 'text', 'Delimiter', ',');
 
 % Load Topography
 load([HOME '/Results/elevations.mat'], 'elevations')
+% elevations = downsize_mean(elevations, 4);
 
 % Use coefficients directly as V
 V = coeffs;  % Already in [n m Cnm Snm] format
@@ -48,7 +49,7 @@ Model.name = 'Mercury';
 Model.GM = GM;
 Model.Re = R_ref;
 Model.geoid = 'none';
-Model.nmax = 20;     
+Model.nmax = 50;     
 Model.correct_depth = 0;
 
 % Top layer (Crust)
@@ -82,7 +83,7 @@ Observation.GM = GM;
 Observation.Re = R_ref;
 
 % Spherical harmonic synthesis settings
-SHbounds = [1 20];
+SHbounds = [1 50];
 height = 0;
 
 % Run synthesis
@@ -112,8 +113,8 @@ for iter = 1:max_iter
     
     % Global Spherical Harmonic Analysis 
     [V_Model] = segment_2layer_model(Model.l1.bound,Model.l2.bound,Model.l3.bound,Model.l1.dens,Model.l2.dens,25000,Model);
-    V_Model(1,3) = 0;
-    V_Model(3,3) = 0;
+    % V_Model(1,3) = 0;
+    % V_Model(3,3) = 0;
 
     % Run synthesis
     model_result = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, V_Model, Model);
@@ -123,9 +124,9 @@ for iter = 1:max_iter
     
     figure;
     aa = 18;
-    imagesc(lonT, latT, deltag_model_mGal);
+    imagesc(lonT, latT, residual_mGal);
     c = colorbar;
-    ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+    ylabel(c, 'residual (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
     set(gca, 'YDir', 'normal', 'Fontsize', 12)
     xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
     ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
