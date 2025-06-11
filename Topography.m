@@ -22,11 +22,13 @@ longitudes = longitudes(1:end-1);
 
 multiplier = 0.5;
 elevations = multiplier * double(data);
+elevations = flipud(elevations);
+elevations = Europe_centered(elevations);
 
 %% plotting
-imagesc(longitudes, latitudes, flipud(elevations))
-colorbar
-set(gca,'YDir','normal')
+imagesc(longitudes, latitudes, elevations);
+colorbar;
+set(gca,'YDir','normal');
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 % colormap(acton)
@@ -38,5 +40,4 @@ set(gca, 'ytick', -90:30:90);
 elevations = downsize_mean(elevations, 64);
 longitudes = downsize_mean(longitudes, 64);
 latitudes = downsize_mean(latitudes, 64);
-elevations=flipud(elevations);
 save([HOME '/Results/elevations.mat'], 'elevations', 'longitudes', 'latitudes');

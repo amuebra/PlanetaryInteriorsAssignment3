@@ -13,17 +13,18 @@ maxDegree = 20;
 R_ref = 2439.4e3;       % Reference radius in meters
 GM = 22031.815e9;       % Mercury GM (m^3/s^2)
 G = 6.67430e-11;        % Gravitational constant (m^3/kg/s^2)
-scaling = -7;
+scaling = 0.01;
 max_iter = 10;
 tolerance = 1e-3;
 coeffs = readmatrix(filename, 'FileType', 'text', 'Delimiter', ',');
+coeffs = [[0,0,0,0,0,0]; coeffs];
 
 % Load Topography
 load([HOME '/Results/elevations.mat'], 'elevations')
 
 % Use coefficients directly as V
 V = coeffs;  % Already in [n m Cnm Snm] format
-V(3,3) = 0; %set C20 to zero 
+V(4,3) = 0; %set C20 to zero 
 
 % Optional: limit to maxDegree
 V = V(V(:,1) <= maxDegree, :);

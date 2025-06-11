@@ -13,10 +13,11 @@ maxDegree = 50;
 R_ref = 2439.4e3;       % Reference radius in meters
 GM = 22031.815e9;       % Mercury GM (m^3/s^2)
 coeffs = readmatrix(filename, 'FileType', 'text', 'Delimiter', ',');
+coeffs = [[0,0,0,0,0,0]; coeffs];
 
 % Use coefficients directly as V
 V = coeffs;  % Already in [n m Cnm Snm] format
-V(3,3) = 0; %set C20 to zero 
+V(4,3) = 0; %set C20 to zero 
 
 % Optional: limit to maxDegree
 V = V(V(:,1) <= maxDegree, :);
@@ -53,6 +54,7 @@ figure
 aa = 18;
 imagesc(lonT, latT, delta_g_mGal);
 c = colorbar;
+colormap(turbo)
 ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)

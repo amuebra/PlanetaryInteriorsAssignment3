@@ -32,6 +32,8 @@ data = textscan(fid, '%f%f%f%f%f%f', 'Delimiter', ',', 'CollectOutput', true);
 fclose(fid);
 
 coeffs = data{1};
+coeffs = [[0,0,0,0,0,0]; coeffs];
+coeffs(3, 3) = 0; % set C20 Coefficient to zero
 degree = coeffs(:,1);
 order  = coeffs(:,2);
 Clm    = coeffs(:,3);
@@ -48,6 +50,7 @@ for i = 1:length(degree)
         Slm_mat(l+1, m+1) = Slm(i);
     end
 end
+
 
 % -------------------------------------------------------------------------
 % LAT/LON GRID (user-defined resolution)
