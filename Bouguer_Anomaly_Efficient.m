@@ -4,8 +4,16 @@ clc;
 
 HOME = pwd;
 addpath([HOME '/Data']);
-addpath([HOME '/Results'])
+addpath([HOME '/Results']);
 addpath([HOME '/Tools']);
+addpath([HOME '/ScientificColourMaps8/vik']);
+addpath([HOME '/ScientificColourMaps8/cork']);
+addpath([HOME '/ScientificColourMaps8/broc']);
+addpath([HOME '/ScientificColourMaps8/bam']);
+load('vik.mat');
+load('cork.mat');
+load('broc.mat');
+load('bam.mat');
 
 %% Parameters
 load([HOME '/Results/elevations.mat'], 'elevations')
@@ -31,9 +39,10 @@ BA = deltag_mGal - deltag_b_mGal; % Bouguer Anomaly in mGal
 %% PLOTTING
 % -------------------------------------------------------------------------
 aa = 18;
-figure;
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 imagesc(lonT, latT, BA)
 c = colorbar;
+colormap(vik);
 ylabel(c, 'Bouguer Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
@@ -42,11 +51,13 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [-180 180]);
 set(gca, 'xtick', -180:30:180);
+saveas(gcf, 'figures/Bouguer_Anomaly.svg');
 
-figure;
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 imagesc(lonT, latT, deltag_mGal)
 c = colorbar;
-ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+colormap(cork);
+ylabel(c, 'Free-air Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
@@ -54,10 +65,12 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [-180 180]);
 set(gca, 'xtick', -180:30:180);
+saveas(gcf, 'figures/Gravity_Anomaly.svg');
 
-figure;
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 imagesc(lonT, latT, deltag_b_mGal)
 c = colorbar;
+colormap(broc);
 ylabel(c, 'Bouguer Correction (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
@@ -66,10 +79,12 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [-180 180]);
 set(gca, 'xtick', -180:30:180);
+saveas(gcf, 'figures/Bouguer_Correction.svg');
 
-figure;
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 imagesc(lonT, latT, elevations)
 c = colorbar;
+colormap(bam);
 ylabel(c, 'Elevation (m)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
@@ -78,5 +93,6 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [-180 180]);
 set(gca, 'xtick', -180:30:180);
+saveas(gcf, 'figures/Elevation.svg');
 
 % plot_map(lonT, latT, elevations, 'Elevation (m)', 18, 12);

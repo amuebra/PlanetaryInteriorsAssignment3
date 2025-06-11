@@ -13,12 +13,13 @@ maxDegree = 50;
 R_ref = 2439.4e3;       % Reference radius in meters
 GM = 22031.815e9;       % Mercury GM (m^3/s^2)
 G = 6.67430e-11;        % Gravitational constant (m^3/kg/s^2)
-scaling = 0.2;
-max_iter = 50;
+scaling = -1;
+max_iter = 5;
 coeffs = readmatrix(filename, 'FileType', 'text', 'Delimiter', ',');
 
 % Load Topography
 load([HOME '/Results/elevations.mat'], 'elevations')
+% elevations = downsize_mean(elevations, 4);
 
 % Use coefficients directly as V
 V = coeffs;  % Already in [n m Cnm Snm] format
@@ -50,14 +51,13 @@ Model.Re = R_ref;
 Model.geoid = 'none';
 Model.nmax = 50;     
 Model.correct_depth = 0;
-D = 35000;
 
 % Top layer (Crust)
 Model.l1.bound = elevations;    % meters with respect to reference sphere
 Model.l1.dens  = 2850;          % Density in kg/m3
 
 % Second layer (Mantle)
-Model.l2.bound = -D*ones(size(elevations)); % meters with respect to reference sphere
+Model.l2.bound = -29360*ones(size(elevations)); % meters with respect to reference sphere
 Model.l2.dens  = 3100;	        % Density in kg/m3
 
 % Bottom bound
@@ -75,7 +75,6 @@ height = 0;
 model_result = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, V_Model, Model);
 
 % Extract gravity anomaly (in mGal)
-deltag_model = model_result.vec.R;
 deltag_model_mGal = model_result.vec.R * 1e5;
 
 %% computate observations
@@ -91,37 +90,31 @@ height = 0;
 observation_result = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, V, Observation);
 
 % Extract gravity anomaly (in mGal)
-deltag_observation = observation_result.vec.R;
-deltag_observation_mGal = observation_result.vec.R * 1e5;
-
-%Constants
-delta_rho = Model.l2.dens - Model.l1.dens;
+deltag_observagtion_mGal = observation_result.vec.R * 1e5;
 
 %% === Iterative Inversion Loop ===
 for iter = 1:max_iter
-    Model.l2.bound = Model.l2.bound + scaling * residual; 
     % compute residual
-    residual = deltag_observation - deltag_model;
-    residual_mGal = deltag_observation_mGal - deltag_model_mGal;
-    delta_r_update = scaling + residual/(2*pi*G * delta_rho);
-    %delta_r_update = scaling * residual_mGal * 1e-5 / (2*pi*G * delta_rho);
+    residual_mGal = deltag_observagtion_mGal - deltag_model_mGal;
+    delta_rho = Model.l2.dens - Model.l1.dens;
+    delta_r_update = scaling * residual_mGal * 1e-5 / (2*pi*G * delta_rho);
     % delta_r_update = residual_mGal * 1e-5 / (2*pi*G * delta_rho);
     
     % Check convergence (use RMS)
-    rms_residual = sqrt(mean(residual(:).^2)) / 1e-5;  % back to mGal
+    rms_residual = sqrt(mean(residual_mGal(:).^2)) / 1e-5;  % back to mGal
     fprintf('Iteration %d: RMS residual = %.4f mGal\n', iter, rms_residual);
-    if rms_residual < tolerance
-         disp('Converged!');
-         break;
-    end
+    % if rms_residual < tolerance
+    %     disp('Converged!');
+    %     break;
+    % end
 
     % update model
     Model.l2.bound = Model.l2.bound - delta_r_update;
     
     % Global Spherical Harmonic Analysis 
     [V_Model] = segment_2layer_model(Model.l1.bound,Model.l2.bound,Model.l3.bound,Model.l1.dens,Model.l2.dens,25000,Model);
-    V_Model(1,3) = 0;
-    V_Model(3,3) = 0;
+    % V_Model(1,3) = 0;
+    % V_Model(3,3) = 0;
 
     % Run synthesis
     model_result = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, V_Model, Model);
@@ -131,9 +124,9 @@ for iter = 1:max_iter
     
     figure;
     aa = 18;
-    imagesc(lonT, latT, deltag_model_mGal);
+    imagesc(lonT, latT, residual_mGal);
     c = colorbar;
-    ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+    ylabel(c, 'residual (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
     set(gca, 'YDir', 'normal', 'Fontsize', 12)
     xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
     ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
@@ -212,4 +205,4 @@ end
 
 %% save data
 save([HOME '/Results/deltag_model_mGal.mat'], 'deltag_model_mGal', 'latT', 'lonT');
-save([HOME '/Results/deltag_observagtion_mGal.mat'], 'deltag_observation_mGal', 'latT', 'lonT');
+save([HOME '/Results/deltag_observagtion_mGal.mat'], 'deltag_observagtion_mGal', 'latT', 'lonT');
