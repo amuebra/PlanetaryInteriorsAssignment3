@@ -9,12 +9,13 @@ addpath([HOME '/Tools'])
 
 % Load the spherical harmonics coefficients from the file
 filename = [HOME '/Data/ggmes_50v06_sha.tab'];
-maxDegree = 50;
+maxDegree = 20;
 R_ref = 2439.4e3;       % Reference radius in meters
 GM = 22031.815e9;       % Mercury GM (m^3/s^2)
 G = 6.67430e-11;        % Gravitational constant (m^3/kg/s^2)
-scaling = 0.2;
-max_iter = 50;
+scaling = -500;
+max_iter = 10;
+tolerance = 1e-3;
 coeffs = readmatrix(filename, 'FileType', 'text', 'Delimiter', ',');
 
 % Load Topography
@@ -48,7 +49,7 @@ Model.name = 'Mercury';
 Model.GM = GM;
 Model.Re = R_ref;
 Model.geoid = 'none';
-Model.nmax = 50;     
+Model.nmax = 20;   
 Model.correct_depth = 0;
 D = 35000;
 
@@ -83,10 +84,6 @@ deltag_model_mGal = model_result.vec.R * 1e5;
 Observation.GM = GM;
 Observation.Re = R_ref;
 
-% Spherical harmonic synthesis settings
-SHbounds = [1 50];
-height = 0;
-
 % Run synthesis
 observation_result = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, V, Observation);
 
@@ -96,19 +93,21 @@ deltag_observation_mGal = observation_result.vec.R * 1e5;
 
 %Constants
 delta_rho = Model.l2.dens - Model.l1.dens;
+residual_history = [];
 
 %% === Iterative Inversion Loop ===
 for iter = 1:max_iter
-    Model.l2.bound = Model.l2.bound + scaling * residual; 
+    % Compute gravity from current model
+    [V_Model] = segment_2layer_model(Model.l1.bound,Model.l2.bound,Model.l3.bound,Model.l1.dens,Model.l2.dens,25000,Model);
+    model_result = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, V_Model, Model);
+    deltag_model = model_result.vec.R;
+
     % compute residual
     residual = deltag_observation - deltag_model;
-    residual_mGal = deltag_observation_mGal - deltag_model_mGal;
-    delta_r_update = scaling + residual/(2*pi*G * delta_rho);
-    %delta_r_update = scaling * residual_mGal * 1e-5 / (2*pi*G * delta_rho);
-    % delta_r_update = residual_mGal * 1e-5 / (2*pi*G * delta_rho);
     
     % Check convergence (use RMS)
     rms_residual = sqrt(mean(residual(:).^2)) / 1e-5;  % back to mGal
+    residual_history(end+1) = rms_residual;
     fprintf('Iteration %d: RMS residual = %.4f mGal\n', iter, rms_residual);
     if rms_residual < tolerance
          disp('Converged!');
@@ -116,37 +115,34 @@ for iter = 1:max_iter
     end
 
     % update model
+    delta_r_update = scaling *residual/(2*pi*G*delta_rho);
     Model.l2.bound = Model.l2.bound - delta_r_update;
-    
-    % Global Spherical Harmonic Analysis 
-    [V_Model] = segment_2layer_model(Model.l1.bound,Model.l2.bound,Model.l3.bound,Model.l1.dens,Model.l2.dens,25000,Model);
-    V_Model(1,3) = 0;
-    V_Model(3,3) = 0;
-
-    % Run synthesis
-    model_result = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, V_Model, Model);
-    
-    % Extract gravity anomaly (in mGal)
-    deltag_model_mGal = model_result.vec.R * 1e5;
-    
-    figure;
-    aa = 18;
-    imagesc(lonT, latT, deltag_model_mGal);
-    c = colorbar;
-    ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
-    set(gca, 'YDir', 'normal', 'Fontsize', 12)
-    xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
-    ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
-    set(gca, 'ylim', [-90 90]);
-    set(gca, 'ytick', -90:30:90);
-    set(gca, 'xlim', [-180 180]);
-    set(gca, 'xtick', -180:30:180);
+        
+   
+    % figure;
+    % aa = 18;
+    % imagesc(lonT, latT, deltag_model_mGal);
+    % c = colorbar;
+    % ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+    % set(gca, 'YDir', 'normal', 'Fontsize', 12)
+    % xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+    % ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+    % set(gca, 'ylim', [-90 90]);
+    % set(gca, 'ytick', -90:30:90);
+    % set(gca, 'xlim', [-180 180]);
+    % set(gca, 'xtick', -180:30:180);
 end
 
 %% plot results
+figure;
+plot(1:length(residual_history), residual_history, 'o-', 'LineWidth', 2);
+xlabel('Iteration Number', 'FontSize', 12, 'Interpreter', 'latex');
+ylabel('RMS Residual (mGal)', 'FontSize', 12, 'Interpreter', 'latex');
+title('Residual vs. Iteration', 'FontSize', 14, 'Interpreter', 'latex');
+grid on;
 % figure;
 % aa = 18;
-% imagesc(lonT, latT, deltag_model_mGal);
+% imagesc(lonT, latT, deltag_model./1e-5);
 % c = colorbar;
 % ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 % set(gca, 'YDir', 'normal', 'Fontsize', 12)
@@ -156,10 +152,10 @@ end
 % set(gca, 'ytick', -90:30:90);
 % set(gca, 'xlim', [-180 180]);
 % set(gca, 'xtick', -180:30:180);
-% 
+% %% 
 % figure;
 % aa = 18;
-% imagesc(lonT, latT, deltag_observagtion_mGal);
+% imagesc(lonT, latT, deltag_observation./1e-5);
 % c = colorbar;
 % ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 % set(gca, 'YDir', 'normal', 'Fontsize', 12)
@@ -169,10 +165,10 @@ end
 % set(gca, 'ytick', -90:30:90);
 % set(gca, 'xlim', [-180 180]);
 % set(gca, 'xtick', -180:30:180);
-% 
+% %% 
 % figure;
 % aa = 18;
-% imagesc(lonT, latT, residual_mGal);
+% imagesc(lonT, latT, residual./1e-5);
 % c = colorbar;
 % ylabel(c, 'residual (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 % set(gca, 'YDir', 'normal', 'Fontsize', 12)
@@ -211,5 +207,5 @@ end
 % set(gca, 'xtick', -180:30:180);
 
 %% save data
-save([HOME '/Results/deltag_model_mGal.mat'], 'deltag_model_mGal', 'latT', 'lonT');
-save([HOME '/Results/deltag_observagtion_mGal.mat'], 'deltag_observation_mGal', 'latT', 'lonT');
+%save([HOME '/Results/deltag_model_mGal.mat'], 'deltag_model_mGal', 'latT', 'lonT');
+%save([HOME '/Results/deltag_observagtion_mGal.mat'], 'deltag_observation_mGal', 'latT', 'lonT');

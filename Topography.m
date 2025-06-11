@@ -24,7 +24,7 @@ multiplier = 0.5;
 elevations = multiplier * double(data);
 
 %% plotting
-imagesc(longitudes, latitudes, elevations)
+imagesc(longitudes, latitudes, flipud(elevations))
 colorbar
 set(gca,'YDir','normal')
 set(gca, 'ylim', [-90 90]);

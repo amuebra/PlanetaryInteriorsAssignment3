@@ -57,10 +57,11 @@ ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
-set(gca, 'ylim', [-90 90]);
-set(gca, 'ytick', -90:30:90);
-set(gca, 'xlim', [-180 180]);
-set(gca, 'xtick', -180:30:180);
+clim(-80, 120),
+% set(gca, 'ylim', [-90 90]);
+% set(gca, 'ytick', -90:30:90);
+% set(gca, 'xlim', [-180 180]);
+% set(gca, 'xtick', -180:30:180);
 
 %% save data
 save([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal', 'latT', 'lonT');
