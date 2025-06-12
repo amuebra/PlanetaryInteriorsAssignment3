@@ -36,7 +36,7 @@ if new_model == 1
   Model.GM = 22031.815E9; % in m^3/s^2
   Model.Re = 2439.4E3; %Reference radius in m
   Model.geoid = 'none';
-  Model.nmax = 179;     
+  Model.nmax = 50;     
   Model.correct_depth = 0;
   
   % Top layer
@@ -68,9 +68,9 @@ end
 %%%%%%%%%%%%%% Part that can be modified %%%%%%%%%%%%%%%%%%%%%%%
 
 latLim =    [-89.5 89.5 1];  % [deg] min latitude, max latitude, resolution latitude (preferable similar to latitude)
-lonLim =    [-180 180 1];% [deg] min longitude, max longitude, resolution longitude (preferable similar to latitude)
+lonLim =    [0.5 359.5 1];% [deg] min longitude, max longitude, resolution longitude (preferable similar to latitude)
 height =    0; % height of computation above spheroid
-SHbounds =  [0 179]; % Truncation settings: lower limit, upper limit SH-coefficients used
+SHbounds =  [0 50]; % Truncation settings: lower limit, upper limit SH-coefficients used
 
 %%%%%%%%%%%%%% Part that can be modified %%%%%%%%%%%%%%%%%%%%%%%
 
@@ -126,8 +126,8 @@ xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
-set(gca, 'xlim', [-180 180]);
-set(gca, 'xtick', -180:30:180);
+%set(gca, 'xlim', [-180 180]);
+%set(gca, 'xtick', -180:30:180);
 
 
 %% Compute degree variance for first model

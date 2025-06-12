@@ -65,4 +65,5 @@ ylabel(cc,'Residual between Airy and Flexural (km)','Interpreter', 'Latex','Font
 set(gca,'YDir','normal','Fontsize',aa)
 
 %% save
+% save also V_Model and insert it directly
 save([HOME '/Results/Flexural_thickness.mat'], 'mapf', 'lonT', 'latT');
