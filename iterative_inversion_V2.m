@@ -17,7 +17,7 @@ R_ref = 2439.4e3;       % Reference radius in meters
 GM = 22031.815e9;       % Mercury GM (m^3/s^2)
 G = 6.67430e-11;        % Gravitational constant (m^3/kg/s^2)
 scaling = 1e6;
-max_iter = 20;
+max_iter = 25;
 tolerance = 1e-4;
 coeffs = readmatrix(filename, 'FileType', 'text', 'Delimiter', ',');
 coeffs = [[0,0,0,0,0,0]; coeffs];
@@ -110,7 +110,7 @@ for iter = 1:max_iter
     disp(residual);
     
     % Check convergence (use RMS)
-    rms_residual = max(residual(:))  % back to mGal
+    rms_residual = max(residual(:));  % back to mGal
     residual_history(end+1) = rms_residual;
     fprintf('Iteration %d: RMS residual = %.4f m\s^2', iter, rms_residual);
     if abs(max(residual(:))) < tolerance
@@ -149,7 +149,7 @@ figure;
 aa = 18;
 imagesc(lonT, latT, flipud(deltag_model)./1e-5);
 c = colorbar;
-ylabel(c, 'Gravity Anomaly Model(mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+ylabel(c, 'Gravity Anomaly Model (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)

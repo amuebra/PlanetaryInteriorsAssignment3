@@ -131,63 +131,68 @@ set(gca, 'ytick', -90:30:90);
 
 
 %% Compute degree variance for first model
-% use function degree variance
-% Extract the relevant columns
-n_all = V_Model(:,1);  % Degree n
-C_all = V_Model(:,3);  % Cnm
-S_all = V_Model(:,4);  % Snm
+V_Model = sortrows(V_Model, [1, 2]);
+[n_A, DV_ModelA] = degreeVariance(V_Model);
 
-nmax = max(n_all);
-deg_var = zeros(nmax+1, 1); % Preallocate; deg 0 to nmax
-degrees = 0:nmax;
-
-% Loop over degrees and sum Cnm^2 + Snm^2 for each n
-for n = degrees
-    idx = (n_all == n);           % Find all rows with degree n
-    deg_var(n+1) = sum(C_all(idx).^2 + S_all(idx).^2);  % Store in index n+1
-end
-
-% for degree power
-deg_power = deg_var ./ (2*degrees + 1);
-deg_power(1) = deg_var(1); % Avoid divide by zero for n = 0
+% % use function degree variance
+% % Extract the relevant columns
+% n_all = V_Model(:,1);  % Degree n
+% C_all = V_Model(:,3);  % Cnm
+% S_all = V_Model(:,4);  % Snm
+% 
+% nmax_A = max(n_all);
+% deg_var = zeros(nmax+1, 1); % Preallocate; deg 0 to nmax
+% degrees = 0:nmax_A;
+% 
+% % Loop over degrees and sum Cnm^2 + Snm^2 for each n
+% for n = degrees
+%     idx = (n_all == n);           % Find all rows with degree n
+%     deg_var(n+1) = sum(C_all(idx).^2 + S_all(idx).^2);  % Store in index n+1
+% end
+% 
+% % for degree power
+% deg_power = deg_var ./ (2*degrees + 1);
+% deg_power(1) = deg_var(1); % Avoid divide by zero for n = 0
 
 %% Compute degree variance for Model B
-% Extract the relevant columns
-n_all_B = V_Model_B(:,1);  % Degree n
-C_all_B = V_Model_B(:,3);  % Cnm
-S_all_B = V_Model_B(:,4);  % Snm
+V_Model_B = sortrows(V_Model_B, [1, 2]);
+[n_B, DV_ModelB] = degreeVariance(V_Model_B);
+% % Extract the relevant columns
+% n_all_B = V_Model_B(:,1);  % Degree n
+% C_all_B = V_Model_B(:,3);  % Cnm
+% S_all_B = V_Model_B(:,4);  % Snm
+% 
+% nmax_B = max(n_all_B);
+% deg_var_B = zeros(nmax_B+1, 1); % Preallocate; deg 0 to nmax
+% degrees_B = 0:nmax_B;
+% 
+% % Loop over degrees and sum Cnm^2 + Snm^2 for each n
+% for n = degrees_B
+%     idx_B = (n_all_B == n);  % Find all rows with degree n
+%     deg_var_B(n+1) = sum(C_all_B(idx_B).^2 + S_all_B(idx_B).^2);  % Store in index n+1
+% end
+% 
+% % Compute degree power spectrum
+% deg_power_B = deg_var_B ./ (2*degrees_B + 1);
+% deg_power_B(1) = deg_var_B(1);  % Avoid divide by zero for n = 0
+% 
 
-nmax_B = max(n_all_B);
-deg_var_B = zeros(nmax_B+1, 1); % Preallocate; deg 0 to nmax
-degrees_B = 0:nmax_B;
-
-% Loop over degrees and sum Cnm^2 + Snm^2 for each n
-for n = degrees_B
-    idx_B = (n_all_B == n);  % Find all rows with degree n
-    deg_var_B(n+1) = sum(C_all_B(idx_B).^2 + S_all_B(idx_B).^2);  % Store in index n+1
-end
-
-% Compute degree power spectrum
-deg_power_B = deg_var_B ./ (2*degrees_B + 1);
-deg_power_B(1) = deg_var_B(1);  % Avoid divide by zero for n = 0
-
+%% Plot the degree power
+% figure;
+% semilogy(degrees, deg_power, 'b', 'LineWidth', 1.5); hold on;
+% semilogy(degrees_B, deg_power_B, 'r', 'LineWidth', 1.5);
+% xlabel('Spherical Harmonic Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
+% ylabel('Degree Power', 'Interpreter', 'latex', 'FontSize', 14);
+% legend('Original Model', 'Model B', 'Location', 'northeast');
+% title('Degree Power Spectrum Comparison', 'FontSize', 16);
+% grid on;
 
 %% Plot the degree variance
 figure;
-semilogy(degrees, deg_power, 'b', 'LineWidth', 1.5); hold on;
-semilogy(degrees_B, deg_power_B, 'r', 'LineWidth', 1.5);
-xlabel('Spherical Harmonic Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
-ylabel('Degree Power', 'Interpreter', 'latex', 'FontSize', 14);
-legend('Original Model', 'Model B', 'Location', 'northeast');
-title('Degree Power Spectrum Comparison', 'FontSize', 16);
-grid on;
-
-%% Plot the degree variance
-figure;
-loglog(degrees, deg_var, 'b', 'LineWidth', 2); hold on;
-loglog(degrees, deg_var_B, 'r', 'LineWidth', 2);
+loglog(n_A.', DV_ModelA.', 'b', 'LineWidth', 2); hold on;
+loglog(n_B.', DV_ModelB.', 'r', 'LineWidth', 2);
 xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
 ylabel('Degree Variance', 'Interpreter', 'latex', 'FontSize', 14);
-legend();
+legend('Airy Model', 'Flexural Model');
 title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
 grid on;
