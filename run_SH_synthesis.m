@@ -25,8 +25,8 @@ V = V(V(:,1) <= maxDegree, :);
 % Define grid resolution
 resolution = 1;
 latLimT = [-90+(1/resolution/2) 90-(1/resolution/2) 1/resolution]; 
-%lonLimT = [1/resolution/2 360-(1/resolution/2) 1/resolution]     % 0 to 360 degree
-lonLimT = [-180+(1/resolution/2) 180-(1/resolution/2) 1/resolution]; %-180 to 180 degree
+lonLimT = [1/resolution/2 360-(1/resolution/2) 1/resolution];     % 0 to 360 degree
+%lonLimT = [-180+(1/resolution/2) 180-(1/resolution/2) 1/resolution]; %-180 to 180 degree
 
 % Generate lat/lon grid
 lonT = lonLimT(1):lonLimT(3):lonLimT(2);

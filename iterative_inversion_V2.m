@@ -16,9 +16,9 @@ height = 0;
 R_ref = 2439.4e3;       % Reference radius in meters
 GM = 22031.815e9;       % Mercury GM (m^3/s^2)
 G = 6.67430e-11;        % Gravitational constant (m^3/kg/s^2)
-scaling = 0.01;
-max_iter = 30;
-tolerance = 1e-3;
+scaling = 1e6;
+max_iter = 20;
+tolerance = 1e-4;
 coeffs = readmatrix(filename, 'FileType', 'text', 'Delimiter', ',');
 coeffs = [[0,0,0,0,0,0]; coeffs];
 
@@ -35,8 +35,8 @@ V = V(V(:,1) <= maxDegree, :);
 % Define grid resolution
 resolution = 1;
 latLimT = [-90+(1/resolution/2) 90-(1/resolution/2) 1/resolution]; 
-%lonLimT = [1/resolution/2 360-(1/resolution/2) 1/resolution]     % 0 to 360 degree
-lonLimT = [-180+(1/resolution/2) 180-(1/resolution/2) 1/resolution]; %-180 to 180 degree
+lonLimT = [1/resolution/2 360-(1/resolution/2) 1/resolution];     % 0 to 360 degree
+%lonLimT = [-180+(1/resolution/2) 180-(1/resolution/2) 1/resolution]; %-180 to 180 degree
 
 % Generate lat/lon grid
 lonT = lonLimT(1):lonLimT(3):lonLimT(2);
@@ -55,15 +55,15 @@ Model.Re = R_ref;
 Model.geoid = 'none';
 Model.nmax = maxDegree;   
 Model.correct_depth = 0;
-D = 35000;
+D = 50000;
 
 % Top layer (Crust)
 Model.l1.bound = elevations;    % meters with respect to reference sphere
-Model.l1.dens  = 2850;          % Density in kg/m3
+Model.l1.dens  = 2500;          % Density in kg/m3
 
 % Second layer (Mantle)
 Model.l2.bound = -D*ones(size(elevations)); % meters with respect to reference sphere
-Model.l2.dens  = 3100;	        % Density in kg/m3
+Model.l2.dens  = 3000;	        % Density in kg/m3
 
 % Bottom bound
 Model.l3.bound = -100000;       % meters with respect to reference sphere
@@ -106,20 +106,22 @@ for iter = 1:max_iter
     deltag_model = model_result.vec.R;
 
     % compute residual
-    residual = deltag_observation - deltag_model;
+    residual = deltag_observation - flipud(deltag_model);
+    disp(residual);
     
     % Check convergence (use RMS)
-    rms_residual = sqrt(mean(residual(:).^2)) / 1e-5;  % back to mGal
+    rms_residual = max(residual(:))  % back to mGal
     residual_history(end+1) = rms_residual;
-    fprintf('Iteration %d: RMS residual = %.4f mGal\n', iter, rms_residual);
-    if rms_residual < tolerance
+    fprintf('Iteration %d: RMS residual = %.4f m\s^2', iter, rms_residual);
+    if abs(max(residual(:))) < tolerance
          disp('Converged!');
          break;
     end
 
     % update model
-    delta_r_update = scaling *residual/(2*pi*G*delta_rho);
-    Model.l2.bound = Model.l2.bound - delta_r_update;
+    %delta_r_update = scaling * residual/(2*pi*G*delta_rho);
+    delta_r_update = scaling.*residual;
+    Model.l2.bound = Model.l2.bound + delta_r_update;
         
    
     % figure;
@@ -145,30 +147,30 @@ title('Residual vs. Iteration', 'FontSize', 14, 'Interpreter', 'latex');
 grid on;
 figure;
 aa = 18;
-imagesc(lonT, latT, deltag_model./1e-5);
+imagesc(lonT, latT, flipud(deltag_model)./1e-5);
 c = colorbar;
-ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+ylabel(c, 'Gravity Anomaly Model(mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
-set(gca, 'xlim', [-180 180]);
-set(gca, 'xtick', -180:30:180);
-%% 
+%set(gca, 'xlim', [-180 180]);
+%set(gca, 'xtick', -180:30:180);
+
 figure;
 aa = 18;
 imagesc(lonT, latT, deltag_observation./1e-5);
 c = colorbar;
-ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+ylabel(c, 'Gravity Anomaly Observation (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
-set(gca, 'xlim', [-180 180]);
-set(gca, 'xtick', -180:30:180);
-%% 
+%set(gca, 'xlim', [-180 180]);
+%set(gca, 'xtick', -180:30:180);
+
 figure;
 aa = 18;
 imagesc(lonT, latT, residual./1e-5);
@@ -179,9 +181,33 @@ xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
-set(gca, 'xlim', [-180 180]);
-set(gca, 'xtick', -180:30:180);
+%%
+figure;
+aa = 18;
+imagesc(lonT, latT, elevations-Model.l2.bound);
+c = colorbar;
+ylabel(c, 'L2 Bound (m)', 'Interpreter', 'latex', 'Fontsize', aa)
+set(gca, 'YDir', 'normal', 'Fontsize', 12)
+xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+set(gca, 'ylim', [-90 90]);
+set(gca, 'ytick', -90:30:90);
+colormap(turbo);
+%set(gca, 'xlim', [-180 180]);
+%set(gca, 'xtick', -180:30:180);
 
+%%
+figure;
+aa = 18;
+imagesc(lonT, latT, elevations);
+c = colorbar;
+ylabel(c, 'Elevation', 'Interpreter', 'latex', 'Fontsize', aa)
+set(gca, 'YDir', 'normal', 'Fontsize', 12)
+xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+set(gca, 'ylim', [-90 90]);
+set(gca, 'ytick', -90:30:90);
+colormap(turbo);
 %% redo Model
 % % update model
 % Model.l2.bound = Model.l2.bound + delta_r_update;
