@@ -44,7 +44,7 @@ gravity_Model(1,3) = 0;
 gravity_Model(3,3)=0;
 new_gravity_Model = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, gravity_Model, Model);
 bouger_correction = new_gravity_Model.vec.R;
-bouger_correction_mGal = flipud(bouger_correction) *1e5;
+bouger_correction_mGal = bouger_correction *1e5;
 %deltag_b = 2*pi*G*rho_crust*elevations; % Bouguer correction
 %deltag_b_correction = deltag_b-deltag_correction;
 

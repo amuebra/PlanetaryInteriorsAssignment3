@@ -55,15 +55,15 @@ Model.Re = R_ref;
 Model.geoid = 'none';
 Model.nmax = maxDegree;   
 Model.correct_depth = 0;
-D = 50000;
+D = 16000;
 
 % Top layer (Crust)
 Model.l1.bound = elevations;    % meters with respect to reference sphere
-Model.l1.dens  = 2500;          % Density in kg/m3
+Model.l1.dens  = 2800;          % Density in kg/m3
 
 % Second layer (Mantle)
 Model.l2.bound = -D*ones(size(elevations)); % meters with respect to reference sphere
-Model.l2.dens  = 3000;	        % Density in kg/m3
+Model.l2.dens  = 3200;	        % Density in kg/m3
 
 % Bottom bound
 Model.l3.bound = -100000;       % meters with respect to reference sphere
@@ -184,7 +184,9 @@ set(gca, 'ytick', -90:30:90);
 %%
 figure;
 aa = 18;
-imagesc(lonT, latT, elevations-Model.l2.bound);
+thickness = elevations - Model.l2.bound;
+fprintf('Minimum thickness = %.4f meters\n', min(thickness(:)));
+imagesc(lonT, latT, thickness);
 c = colorbar;
 ylabel(c, 'L2 Bound (m)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
