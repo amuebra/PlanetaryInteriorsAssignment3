@@ -59,7 +59,7 @@ ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
-clim(-80, 120),
+% clim([-80, 120]),
 % set(gca, 'ylim', [-90 90]);
 % set(gca, 'ytick', -90:30:90);
 % set(gca, 'xlim', [-180 180]);
