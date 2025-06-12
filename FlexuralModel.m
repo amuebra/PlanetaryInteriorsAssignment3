@@ -35,7 +35,7 @@ sc = cs2sc(cs);
 
 n = 1:size(sc,1);
 
-D = 100e9*(30e3)^3/(12*(1-0.5^2)); % 200e9 Youngs Modulus, 100e3 Elastic Thickness T_e adapt for Mercury
+D = 100e9*(30e3)^3/(12*(1-0.25^2)); % 200e9 Youngs Modulus, 100e3 Elastic Thickness T_e and oissons Ratio adapt for Mercury
 PHI = (1 + (D)/(400*3.7).*(2.*(n+1)./(2*2439.4e3)).^4).^(-1); %9.81 changed to 3.7, radius changed from 6378 to what is 500 density difference 
 % between mantle and crust
 

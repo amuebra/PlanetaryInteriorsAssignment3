@@ -3,6 +3,7 @@ clear;
 close all;
 clc;
 
+
 HOME = pwd;
 addpath([HOME '/Data']);
 addpath([HOME '/Results'])
@@ -130,6 +131,7 @@ set(gca, 'xtick', -180:30:180);
 
 
 %% Compute degree variance for first model
+% use function degree variance
 % Extract the relevant columns
 n_all = V_Model(:,1);  % Degree n
 C_all = V_Model(:,3);  % Cnm
