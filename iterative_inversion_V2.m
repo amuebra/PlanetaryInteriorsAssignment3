@@ -55,7 +55,7 @@ Model.Re = R_ref;
 Model.geoid = 'none';
 Model.nmax = maxDegree;   
 Model.correct_depth = 0;
-D = 16000;
+D = 16000+2.0459e+04;
 
 % Top layer (Crust)
 Model.l1.bound = elevations;    % meters with respect to reference sphere

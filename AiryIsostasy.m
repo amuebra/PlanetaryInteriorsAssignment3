@@ -18,7 +18,7 @@ load([HOME '/Results/elevations.mat'], 'elevations', 'longitudes', 'latitudes') 
 % h = h(1:step:end, 1:step:end);  % Keep every 100th row and column
 
 %% --- Physical Parameters (adjust as needed) ---
-D = 35e3;            % Crustal thickness in meters (e.g., 35 km)
+D = 36459;            % Crustal thickness in meters (e.g., 35 km)
 rho_crust = 2800;     % Crustal density (kg/m^3)
 rho_mantle = 3200;    % Mantle density (kg/m^3)
 h = elevations;
