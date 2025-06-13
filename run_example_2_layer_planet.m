@@ -22,7 +22,7 @@ if new_model == 1
   Model.name = 'bouger_correction';
   
   % Additional variables
-  Model.GM = 22031.815E9; % in m^3/s^2
+  Model.GM = 22031.815E9; % in m^3/s^2 
   Model.Re = 2439.4E3; %Reference radius in m
   Model.geoid = 'none';
   Model.nmax = 50;     

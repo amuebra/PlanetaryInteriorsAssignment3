@@ -42,14 +42,6 @@ bouger_correction = new_gravity_Model.vec.R;
 bouger_correction_mGal = flipud(bouger_correction) *1e5;
 BA = deltag_mGal - bouger_correction_mGal; % Bouguer Anomaly in mGal
 
-% deltag_b = 2*pi*G*rho_crust*elevations; % Bouguer correction
-% 
-% deltag_b_mGal = deltag_b * 1e5; % 1 m/s^2 = 1e5 mGal
-% scaling_factor = size(deltag_b_mGal,1)/size(deltag_mGal,1);
-% 
-% deltag_b_mGal = downsize_mean(deltag_b_mGal, scaling_factor);
-% BA = deltag_mGal-deltag_b_mGal;
-
 % -------------------------------------------------------------------------
 %% PLOTTING
 % -------------------------------------------------------------------------
@@ -57,7 +49,8 @@ aa = 18;
 figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 imagesc(lonT, latT, BA)
 c = colorbar;
-colormap(vik);
+%colormap(vik);
+colormap(turbo)
 ylabel(c, 'Bouguer Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
