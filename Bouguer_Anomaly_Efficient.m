@@ -52,6 +52,11 @@ deltag_b = 2*pi*G*rho_crust*elevations; % Bouguer correction
 deltag_b_mGal = deltag_b * 1e5; % 1 m/s^2 = 1e5 mGal
 scaling_factor = size(deltag_b_mGal,1)/size(deltag_mGal,1);
 
+% deltag_b = 2*pi*G*rho_crust*elevations; % Bouguer correction
+% 
+% deltag_b_mGal = deltag_b * 1e5; % 1 m/s^2 = 1e5 mGal
+% scaling_factor = size(deltag_b_mGal,1)/size(deltag_mGal,1);
+% 
 deltag_b_mGal = downsize_mean(deltag_b_mGal, scaling_factor);
 BA = deltag_mGal-deltag_b_mGal;
 
