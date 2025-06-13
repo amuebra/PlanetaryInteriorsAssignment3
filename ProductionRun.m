@@ -10,14 +10,20 @@ addpath([HOME '/Results'])
 addpath([HOME '/Tools']);
 
 % Load Data
-tpl = load([HOME '/Results/elevations.mat'], 'elevations');
-elevations = tpl.elevations;
-amp = load([HOME '/Results/Airy_thickness.mat'], 'crust_thickness','longitudes', 'latitudes');
-airy_thickness = amp.crust_thickness;
-longitudes = amp.longitudes;
-latitudes = amp.latitudes;
-fmp = load([HOME '/Results/Flexural_thickness.mat'], 'mapf');
-flexural_crust_thickness = fmp.mapf;
+% tpl = load([HOME '/Results/elevations.mat'], 'elevations');
+% elevations = tpl.elevations;
+load([HOME '/Results/elevations.mat'], 'elevations');
+% amp = load([HOME '/Results/Airy_thickness.mat'], 'crust_thickness','longitudes', 'latitudes');
+% airy_thickness = amp.crust_thickness;
+% longitudes = amp.longitudes;
+% latitudes = amp.latitudes;
+load([HOME '/Results/Airy_thickness.mat'], 'crust_thickness','longitudes', 'latitudes');
+airy_thickness = crust_thickness;
+% fmp = load([HOME '/Results/Flexural_thickness.mat'], 'mapf');
+% flexural_crust_thickness = fmp.mapf;
+load([HOME '/Results/Flexural_thickness.mat'], 'mapf');
+flexural_crust_thickness = mapf;
+load([HOME '/Results/coeffs_obs.mat'], 'V');
 
 % Model Construction
 
@@ -134,54 +140,44 @@ set(gca, 'ytick', -90:30:90);
 %set(gca, 'xtick', -180:30:180);
 
 
-%% Compute degree variance for first model
-V_Model = sortrows(V_Model, [1, 2]);
+%% Compute degree variance
 [n_A, DV_ModelA] = degreeVariance(V_Model);
-
-% % use function degree variance
-% % Extract the relevant columns
-% n_all = V_Model(:,1);  % Degree n
-% C_all = V_Model(:,3);  % Cnm
-% S_all = V_Model(:,4);  % Snm
-% 
-% nmax_A = max(n_all);
-% deg_var = zeros(nmax+1, 1); % Preallocate; deg 0 to nmax
-% degrees = 0:nmax_A;
-% 
-% % Loop over degrees and sum Cnm^2 + Snm^2 for each n
-% for n = degrees
-%     idx = (n_all == n);           % Find all rows with degree n
-%     deg_var(n+1) = sum(C_all(idx).^2 + S_all(idx).^2);  % Store in index n+1
-% end
-% 
-% % for degree power
-% deg_power = deg_var ./ (2*degrees + 1);
-% deg_power(1) = deg_var(1); % Avoid divide by zero for n = 0
-
-%% Compute degree variance for Model B
-V_Model_B = sortrows(V_Model_B, [1, 2]);
 [n_B, DV_ModelB] = degreeVariance(V_Model_B);
-% % Extract the relevant columns
-% n_all_B = V_Model_B(:,1);  % Degree n
-% C_all_B = V_Model_B(:,3);  % Cnm
-% S_all_B = V_Model_B(:,4);  % Snm
-% 
-% nmax_B = max(n_all_B);
-% deg_var_B = zeros(nmax_B+1, 1); % Preallocate; deg 0 to nmax
-% degrees_B = 0:nmax_B;
-% 
-% % Loop over degrees and sum Cnm^2 + Snm^2 for each n
-% for n = degrees_B
-%     idx_B = (n_all_B == n);  % Find all rows with degree n
-%     deg_var_B(n+1) = sum(C_all_B(idx_B).^2 + S_all_B(idx_B).^2);  % Store in index n+1
-% end
-% 
-% % Compute degree power spectrum
-% deg_power_B = deg_var_B ./ (2*degrees_B + 1);
-% deg_power_B(1) = deg_var_B(1);  % Avoid divide by zero for n = 0
-% 
+V = sortrows(V, [2, 1]);
+[n, DV] = degreeVariance(V);
 
 %% Plot the degree variance
+figure;
+plot(n_A.', DV_ModelA.', 'b', 'LineWidth', 2); hold on;
+plot(n_B.', DV_ModelB.', 'r', 'LineWidth', 2);
+plot(n_B.', DV.', 'g', 'LineWidth', 2);
+xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
+ylabel('Degree Variance', 'Interpreter', 'latex', 'FontSize', 14);
+set(gca, 'YScale', 'log');
+set(gca, 'XScale', 'log');
+legend('Airy Model', 'Flexural Model', 'Observation');
+title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
+grid on;
+
+%% Compute degree power spectrum
+deg_power_A = DV_ModelA ./ (2*n_A + 1);
+deg_power_B = DV_ModelB ./ (2*n_B + 1);
+deg_power = DV ./ (2*n + 1);
+% deg_power_A_mGal = deg_power_A*1e5;
+% deg_power_B_mGal = deg_power_B*1e5;
+
+figure;
+scatter(n_A.', deg_power_A', 'b', 'LineWidth', 2); hold on;
+scatter(n_B.', deg_power_B', 'r', 'LineWidth', 2);
+scatter(n_B.', deg_power', 'g', 'LineWidth', 2);
+xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
+ylabel('Power Spectrum', 'Interpreter', 'latex', 'FontSize', 14);
+set(gca, 'YScale', 'log');
+set(gca, 'XScale', 'log');
+legend('Airy Model', 'Flexural Model', 'Observation');
+%title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
+grid on;
+
 % figure;
 % semilogy(degrees, deg_power, 'b', 'LineWidth', 1.5); hold on;
 % semilogy(degrees_B, deg_power_B, 'r', 'LineWidth', 1.5);
@@ -191,33 +187,19 @@ V_Model_B = sortrows(V_Model_B, [1, 2]);
 % title('Degree Power Spectrum Comparison', 'FontSize', 16);
 % grid on;
 
-%% Plot the degree variance
+%% Compute Root Mean Square
+RMS_A = sqrt(deg_power_A);
+RMS_B = sqrt(deg_power_B);
+RMS = sqrt(deg_power);
+
 figure;
-plot(n_A.', DV_ModelA.', 'b', 'LineWidth', 2); hold on;
-plot(n_B.', DV_ModelB.', 'r', 'LineWidth', 2);
+scatter(n_A.', RMS_A', 'b', 'LineWidth', 2); hold on;
+scatter(n_B.', RMS_B', 'r', 'LineWidth', 2);
+scatter(n_B.', RMS', 'g', 'LineWidth', 2);
 xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
-ylabel('Degree Variance', 'Interpreter', 'latex', 'FontSize', 14);
-set(gca, 'YScale', 'log')
-legend('Airy Model', 'Flexural Model');
-title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
+ylabel('Power Spectrum', 'Interpreter', 'latex', 'FontSize', 14);
+set(gca, 'YScale', 'log');
+set(gca, 'XScale', 'log');
+legend('Airy Model', 'Flexural Model', 'Observation');
+%title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
 grid on;
-
-
-%% Compute degree power spectrum
-% deg_power_A = DV_ModelA ./ (2*n_A + 1);
-% deg_power_A(1) = DV_ModelA(1);  % Avoid divide by zero for n = 0
-% deg_power_A_mGal = deg_power_A*1e5;
-% 
-% deg_power_B = DV_ModelB ./ (2*n_B + 1);
-% deg_power_B(1) = DV_ModelB(1);  % Avoid divide by zero for n = 0
-% deg_power_B_mGal = deg_power_B*1e5;
-% 
-% figure;
-% scatter(n_A.', deg_power_A_mGal', 'b', 'LineWidth', 2); hold on;
-% scatter(n_B.', deg_power_B_mGal', 'r', 'LineWidth', 2);
-% xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
-% ylabel('Power Spectrum', 'Interpreter', 'latex', 'FontSize', 14);
-% set(gca, 'YScale', 'log')
-% legend('Airy Model', 'Flexural Model');
-% %title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
-% grid on;

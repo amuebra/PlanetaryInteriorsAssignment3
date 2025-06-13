@@ -67,3 +67,4 @@ ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 
 %% save data
 save([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal', 'latT', 'lonT');
+save([HOME '/Results/coeffs_obs.mat'], 'V');
