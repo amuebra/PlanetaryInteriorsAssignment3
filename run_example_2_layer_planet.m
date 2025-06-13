@@ -57,7 +57,7 @@ end
 latLim =    [-89.5 89.5 1];  % [deg] min latitude, max latitude, resolution latitude (preferable similar to latitude)
 lonLim =    [0.05 359.5 1];% [deg] min longitude, max longitude, resolution longitude (preferable similar to latitude)
 height =    0; % height of computation above spheroid
-SHbounds =  [0 50]; % Truncation settings: lower limit, upper limit SH-coefficients used
+SHbounds =  [1 50]; % Truncation settings: lower limit, upper limit SH-coefficients used
 
 %%%%%%%%%%%%%% Part that can be modified %%%%%%%%%%%%%%%%%%%%%%%
 
@@ -76,4 +76,4 @@ toc
 
 %% Save data
 
-save([HOME '/Results/data_' Model.name '_' num2str(SHbounds(1)) '_' num2str(SHbounds(2)) '.mat'],'data','V_Model','Model
+save([HOME '/Results/data_' Model.name '_' num2str(SHbounds(1)) '_' num2str(SHbounds(2)) '.mat'],'data','V_Model','Model')

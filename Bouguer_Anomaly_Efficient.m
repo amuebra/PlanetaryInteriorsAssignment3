@@ -20,11 +20,6 @@ load([HOME '/Results/elevations.mat'], 'elevations')
 load([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal')
 
 deltag_mGal = delta_g_mGal;
-lmax = 100;                         % Maximum degree/order
-R_ref = 2439.4;                     % Reference radius (km)
-GM = 22031.8150000000;              % Mercury GM (km^3/s^2)
-G = 6.6743e-11;                     % gravitational constant
-rho_crust = 2800;                   % crust density
 resolution = 1;                     % degrees (1 = 1x1°, 4 = 0.25x0.25°) from GravityChangedLatitude.m
 height = 0;
 SHbounds = [1 50];
@@ -72,7 +67,7 @@ set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [0 360]);
 set(gca, 'xtick', 0:30:360);
 saveas(gcf, 'figures/Bouguer_Anomaly.svg');
-
+%%
 figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 imagesc(lonT, latT, deltag_mGal)
 c = colorbar;
