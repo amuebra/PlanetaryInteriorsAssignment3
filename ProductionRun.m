@@ -13,7 +13,7 @@ addpath([HOME '/Tools']);
 tpl = load([HOME '/Results/elevations.mat'], 'elevations');
 elevations = tpl.elevations;
 amp = load([HOME '/Results/Airy_thickness.mat'], 'crust_thickness','longitudes', 'latitudes');
-crust_thickness = amp.crust_thickness;
+airy_thickness = amp.crust_thickness;
 longitudes = amp.longitudes;
 latitudes = amp.latitudes;
 fmp = load([HOME '/Results/Flexural_thickness.mat'], 'mapf');
@@ -47,7 +47,7 @@ if new_model == 1
   
   %% Second layer
   %Model.l2.bound = -50000+Model.l1.bound;     % meters with respect to reference sphere ( or -50000.*ones(size(TOPO)) make a loop around Second layer fr M1 and M2
-  Model.l2.bound = -crust_thickness;
+  Model.l2.bound = -airy_thickness;
   Model.l2.dens  = 3200;	   % Density in kg/m3
   
   % Bottom bound
@@ -131,8 +131,19 @@ set(gca, 'ytick', -90:30:90);
 
 
 %% Compute degree variance for first model
-% use function degree variance
-% Extract the relevant columns
+%% use function degree variance
+% fid = fopen('airy_thickness.xyz', 'w');
+% for i = 1:length(latitudes)
+%     for j = 1:length(longitudes)
+%         fprintf(fid, '%.2f %.2f %.2f\n', longitudes(j), latitudes(i),airy_thickness(i,j));
+%     end
+% end
+% fclose(fid);
+% gmt xyz2grd airy_thickness.xyz -Gairy_thickness.gmt -R0/360/-90/90 -I1/1
+%DV = degreeVariance(airy_thickness.gmt)
+
+
+%% Extract the relevant columns
 n_all = V_Model(:,1);  % Degree n
 C_all = V_Model(:,3);  % Cnm
 S_all = V_Model(:,4);  % Snm

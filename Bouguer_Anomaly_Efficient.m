@@ -24,7 +24,7 @@ lmax = 100;                         % Maximum degree/order
 R_ref = 2439.4;                     % Reference radius (km)
 GM = 22031.8150000000;              % Mercury GM (km^3/s^2)
 G = 6.6743e-11;                     % gravitational constant
-rho_crust = 2500;                   % crust density
+rho_crust = 2800;                   % crust density
 resolution = 1;                     % degrees (1 = 1x1°, 4 = 0.25x0.25°) from GravityChangedLatitude.m
 height = 0;
 SHbounds = [1 50];
@@ -44,15 +44,16 @@ gravity_Model(1,3) = 0;
 gravity_Model(3,3)=0;
 new_gravity_Model = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, gravity_Model, Model);
 bouger_correction = new_gravity_Model.vec.R;
-bouger_correction_mGal = bouger_correction *1e5;
-%deltag_b = 2*pi*G*rho_crust*elevations; % Bouguer correction
-%deltag_b_correction = deltag_b-deltag_correction;
-
-%deltag_b_mGal = deltag_b * 1e5; % 1 m/s^2 = 1e5 mGal
-%scaling_factor = size(deltag_b_mGal,1)/size(deltag_mGal,1);
-
-%deltag_b_mGal = downsize_mean(deltag_b_mGal, scaling_factor);
+bouger_correction_mGal = flipud(bouger_correction) *1e5;
 BA = deltag_mGal - bouger_correction_mGal; % Bouguer Anomaly in mGal
+
+% deltag_b = 2*pi*G*rho_crust*elevations; % Bouguer correction
+% 
+% deltag_b_mGal = deltag_b * 1e5; % 1 m/s^2 = 1e5 mGal
+% scaling_factor = size(deltag_b_mGal,1)/size(deltag_mGal,1);
+% 
+% deltag_b_mGal = downsize_mean(deltag_b_mGal, scaling_factor);
+% BA = deltag_mGal-deltag_b_mGal;
 
 % -------------------------------------------------------------------------
 %% PLOTTING
