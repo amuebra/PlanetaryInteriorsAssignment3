@@ -5,7 +5,8 @@ clc;
 HOME = pwd;
 addpath([HOME '/Data']);
 addpath([HOME '/Results']);
-addpath([HOME '/Tools'])
+addpath([HOME '/Tools']);
+addpath([HOME '/Figures']);
 addpath([HOME '/ScientificColourMaps8/vik']);
 addpath([HOME '/ScientificColourMaps8/cork']);
 addpath([HOME '/ScientificColourMaps8/broc']);
@@ -17,7 +18,7 @@ load('bam.mat');
 
 % Load the spherical harmonics coefficients from the file
 filename = [HOME '/Data/ggmes_50v06_sha.tab'];
-maxDegree = 20;
+maxDegree = 30;
 % Spherical harmonic synthesis settings
 SHbounds = [1 maxDegree];
 height = 0;
@@ -25,7 +26,7 @@ R_ref = 2439.4e3;       % Reference radius in meters
 GM = 22031.815e9;       % Mercury GM (m^3/s^2)
 G = 6.67430e-11;        % Gravitational constant (m^3/kg/s^2)
 scaling = 1e6;
-max_iter = 25;
+max_iter = 40;
 tolerance = 1e-4;
 coeffs = readmatrix(filename, 'FileType', 'text', 'Delimiter', ',');
 coeffs = [[0,0,0,0,0,0]; coeffs];
@@ -167,7 +168,7 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [0 360]);
 set(gca, 'xtick', 0:30:360);
-saveas(gcf, 'figures/Model_Gravity_Anomaly.svg');
+saveas(gcf, 'Figures/Model_Gravity_Anomaly.svg');
 
 figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 aa = 18;
@@ -182,7 +183,7 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [0 360]);
 set(gca, 'xtick', 0:30:360);
-saveas(gcf, 'figures/Observation_Gravity_Anomaly.svg');
+saveas(gcf, 'Figures/Observation_Gravity_Anomaly.svg');
 
 figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 aa = 18;
@@ -197,7 +198,7 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [0 360]);
 set(gca, 'xtick', 0:30:360);
-saveas(gcf, 'figures/Residual.svg');
+saveas(gcf, 'Figures/Residual.svg');
 
 %%
 figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
@@ -215,7 +216,7 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [0 360]);
 set(gca, 'xtick', 0:30:360);
-saveas(gcf, 'figures/Thickness.svg');
+saveas(gcf, 'Figures/Thickness.svg');
 
 %%
 figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);

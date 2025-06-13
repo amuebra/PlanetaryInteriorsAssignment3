@@ -193,8 +193,8 @@ V_Model_B = sortrows(V_Model_B, [1, 2]);
 
 %% Plot the degree variance
 figure;
-scatter(n_A.', DV_ModelA.', 'b', 'LineWidth', 2); hold on;
-scatter(n_B.', DV_ModelB.', 'r', 'LineWidth', 2);
+plot(n_A.', DV_ModelA.', 'b', 'LineWidth', 2); hold on;
+plot(n_B.', DV_ModelB.', 'r', 'LineWidth', 2);
 xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
 ylabel('Degree Variance', 'Interpreter', 'latex', 'FontSize', 14);
 set(gca, 'YScale', 'log')
