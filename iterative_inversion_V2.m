@@ -6,6 +6,14 @@ HOME = pwd;
 addpath([HOME '/Data']);
 addpath([HOME '/Results']);
 addpath([HOME '/Tools'])
+addpath([HOME '/ScientificColourMaps8/vik']);
+addpath([HOME '/ScientificColourMaps8/cork']);
+addpath([HOME '/ScientificColourMaps8/broc']);
+addpath([HOME '/ScientificColourMaps8/bam']);
+load('vik.mat');
+load('cork.mat');
+load('broc.mat');
+load('bam.mat');
 
 % Load the spherical harmonics coefficients from the file
 filename = [HOME '/Data/ggmes_50v06_sha.tab'];
@@ -139,103 +147,90 @@ for iter = 1:max_iter
 end
 
 %% plot results
-figure;
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 plot(1:length(residual_history), residual_history, 'o-', 'LineWidth', 2);
 xlabel('Iteration Number', 'FontSize', 12, 'Interpreter', 'latex');
 ylabel('RMS Residual (mGal)', 'FontSize', 12, 'Interpreter', 'latex');
 title('Residual vs. Iteration', 'FontSize', 14, 'Interpreter', 'latex');
 grid on;
-figure;
+
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 aa = 18;
 imagesc(lonT, latT, flipud(deltag_model)./1e-5);
 c = colorbar;
-ylabel(c, 'Gravity Anomaly Model (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+colormap(cork);
+ylabel(c, 'Gravity Anomaly Modelled (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
-%set(gca, 'xlim', [-180 180]);
-%set(gca, 'xtick', -180:30:180);
+set(gca, 'xlim', [0 360]);
+set(gca, 'xtick', 0:30:360);
+saveas(gcf, 'figures/Model_Gravity_Anomaly.svg');
 
-figure;
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 aa = 18;
 imagesc(lonT, latT, deltag_observation./1e-5);
 c = colorbar;
-ylabel(c, 'Gravity Anomaly Observation (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+colormap(cork);
+ylabel(c, 'Gravity Anomaly Observed (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
-%set(gca, 'xlim', [-180 180]);
-%set(gca, 'xtick', -180:30:180);
+set(gca, 'xlim', [0 360]);
+set(gca, 'xtick', 0:30:360);
+saveas(gcf, 'figures/Observation_Gravity_Anomaly.svg');
 
-figure;
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 aa = 18;
 imagesc(lonT, latT, residual./1e-5);
 c = colorbar;
-ylabel(c, 'residual (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
+colormap(broc);
+ylabel(c, 'Residual (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
+set(gca, 'xlim', [0 360]);
+set(gca, 'xtick', 0:30:360);
+saveas(gcf, 'figures/Residual.svg');
+
 %%
-figure;
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 aa = 18;
 thickness = elevations - Model.l2.bound;
 fprintf('Minimum thickness = %.4f meters\n', min(thickness(:)));
-imagesc(lonT, latT, thickness);
+imagesc(lonT, latT, thickness./1e3);
 c = colorbar;
-ylabel(c, 'L2 Bound (m)', 'Interpreter', 'latex', 'Fontsize', aa)
+colormap(vik);
+ylabel(c, 'Thickness (km)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
-colormap(turbo);
-%set(gca, 'xlim', [-180 180]);
-%set(gca, 'xtick', -180:30:180);
+set(gca, 'xlim', [0 360]);
+set(gca, 'xtick', 0:30:360);
+saveas(gcf, 'figures/Thickness.svg');
 
 %%
-figure;
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 aa = 18;
-imagesc(lonT, latT, elevations);
+imagesc(lonT, latT, elevations./1e3);
 c = colorbar;
-ylabel(c, 'Elevation', 'Interpreter', 'latex', 'Fontsize', aa)
+colormap(bam);
+ylabel(c, 'Elevation (km)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'YDir', 'normal', 'Fontsize', 12)
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
-colormap(turbo);
-%% redo Model
-% % update model
-% Model.l2.bound = Model.l2.bound + delta_r_update;
-% 
-% % Global Spherical Harmonic Analysis 
-% [V_Model] = segment_2layer_model(Model.l1.bound,Model.l2.bound,Model.l3.bound,Model.l1.dens,Model.l2.dens,25000,Model);
-% 
-% % Run synthesis
-% model_result = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, V_Model, Model);
-% 
-% % Extract gravity anomaly (in mGal)
-% deltag_model_mGal = model_result.vec.R * 1e5;
-
-%% plot results
-% figure;
-% aa = 18;
-% imagesc(lonT, latT, deltag_model_mGal);
-% c = colorbar;
-% ylabel(c, 'Gravity Anomaly (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)
-% set(gca, 'YDir', 'normal', 'Fontsize', 12)
-% xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
-% ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
-% set(gca, 'ylim', [-90 90]);
-% set(gca, 'ytick', -90:30:90);
-% set(gca, 'xlim', [-180 180]);
-% set(gca, 'xtick', -180:30:180);
+set(gca, 'xlim', [0 360]);
+set(gca, 'xtick', 0:30:360);
 
 %% save data
 %save([HOME '/Results/deltag_model_mGal.mat'], 'deltag_model_mGal', 'latT', 'lonT');
