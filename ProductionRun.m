@@ -10,14 +10,20 @@ addpath([HOME '/Results'])
 addpath([HOME '/Tools']);
 
 % Load Data
-tpl = load([HOME '/Results/elevations.mat'], 'elevations');
-elevations = tpl.elevations;
-amp = load([HOME '/Results/Airy_thickness.mat'], 'crust_thickness','longitudes', 'latitudes');
-airy_thickness = amp.crust_thickness;
-longitudes = amp.longitudes;
-latitudes = amp.latitudes;
-fmp = load([HOME '/Results/Flexural_thickness.mat'], 'mapf');
-flexural_crust_thickness = fmp.mapf;
+% tpl = load([HOME '/Results/elevations.mat'], 'elevations');
+% elevations = tpl.elevations;
+load([HOME '/Results/elevations.mat'], 'elevations');
+% amp = load([HOME '/Results/Airy_thickness.mat'], 'crust_thickness','longitudes', 'latitudes');
+% airy_thickness = amp.crust_thickness;
+% longitudes = amp.longitudes;
+% latitudes = amp.latitudes;
+load([HOME '/Results/Airy_thickness.mat'], 'crust_thickness','longitudes', 'latitudes');
+airy_thickness = crust_thickness;
+% fmp = load([HOME '/Results/Flexural_thickness.mat'], 'mapf');
+% flexural_crust_thickness = fmp.mapf;
+load([HOME '/Results/Flexural_thickness.mat'], 'mapf');
+flexural_crust_thickness = mapf;
+load([HOME '/Results/coeffs_obs.mat'], 'V');
 
 % Model Construction
 
@@ -78,8 +84,8 @@ SHbounds =  [0 50]; % Truncation settings: lower limit, upper limit SH-coefficie
 
 tic;
 [V_Model] = segment_2layer_model(Model.l1.bound,Model.l2.bound,Model.l3.bound,Model.l1.dens,Model.l2.dens,62000,Model); % order, number, S-coefficentes, c-coefficents
-%V_Model(1,3) = 0;
-%V_Model(3,3)= 0;
+V_Model(1,3) = 0;
+V_Model(3,3)= 0;
 %or something similar it shows spherical harmonics
 toc
 
@@ -106,8 +112,8 @@ Model_B.l2.bound = -flexural_crust_thickness;
 % Run SH analysis and synthesis
 [V_Model_B] = segment_2layer_model(Model_B.l1.bound, Model_B.l2.bound, Model_B.l3.bound, ...
                                    Model_B.l1.dens, Model_B.l2.dens, 62000, Model_B);
-%V_Model_B(1,3) = 0;
-%V_Model_B(3,3) = 0;
+V_Model_B(1,3) = 0;
+V_Model_B(3,3) = 0;
 
 [data_B] = model_SH_synthesis(lonLim, latLim, height, SHbounds, V_Model_B, Model_B);
 
@@ -137,41 +143,65 @@ set(gca, 'ytick', -90:30:90);
 %% Compute degree variance for first model
 %V_Model = sortrows(V_Model, [1, 2]);
 [n_A, DV_ModelA] = degreeVariance(V_Model);
-
-
-
-%% Compute degree variance for Model B
-%V_Model_B = sortrows(V_Model_B, [1, 2]);
 [n_B, DV_ModelB] = degreeVariance(V_Model_B);
+V = sortrows(V, [2, 1]);
+[n, DV] = degreeVariance(V);
 
 
 %% Plot the degree variance
 figure;
 plot(n_A.', DV_ModelA.', 'b', 'LineWidth', 2); hold on;
 plot(n_B.', DV_ModelB.', 'r', 'LineWidth', 2);
+plot(n_B.', DV.', 'g', 'LineWidth', 2);
 xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
 ylabel('Degree Variance', 'Interpreter', 'latex', 'FontSize', 14);
-set(gca, 'YScale', 'log')
-legend('Airy Model', 'Flexural Model');
+set(gca, 'YScale', 'log');
+set(gca, 'XScale', 'log');
+legend('Airy Model', 'Flexural Model', 'Observation');
 title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
 grid on;
 
-
-% Compute RMS
-deg_power_A = sqrt(DV_ModelA ./ (2*n_A + 1));
-deg_power_A(1) = DV_ModelA(1);  % Avoid divide by zero for n = 0
-deg_power_A_mGal = deg_power_A*1e5;
-
-deg_power_B = sqrt(DV_ModelB ./ (2*n_B + 1));
-deg_power_B(1) = DV_ModelB(1);  % Avoid divide by zero for n = 0
-deg_power_B_mGal = deg_power_B*1e5;
+%% Compute degree power spectrum
+deg_power_A = DV_ModelA ./ (2*n_A + 1);
+deg_power_B = DV_ModelB ./ (2*n_B + 1);
+deg_power = DV ./ (2*n + 1);
+% deg_power_A_mGal = deg_power_A*1e5;
+% deg_power_B_mGal = deg_power_B*1e5;
 
 figure;
-plot(n_A.', deg_power_A_mGal', 'b', 'LineWidth', 2); hold on;
-plot(n_B.', deg_power_B_mGal', 'r', 'LineWidth', 2);
+scatter(n_A.', deg_power_A', 'b', 'LineWidth', 2); hold on;
+scatter(n_B.', deg_power_B', 'r', 'LineWidth', 2);
+scatter(n_B.', deg_power', 'g', 'LineWidth', 2);
 xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
 ylabel('Power Spectrum', 'Interpreter', 'latex', 'FontSize', 14);
-set(gca, 'YScale', 'log')
-legend('Airy Model', 'Flexural Model');
+set(gca, 'YScale', 'log');
+set(gca, 'XScale', 'log');
+legend('Airy Model', 'Flexural Model', 'Observation');
+%title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
+grid on;
+
+% figure;
+% semilogy(degrees, deg_power, 'b', 'LineWidth', 1.5); hold on;
+% semilogy(degrees_B, deg_power_B, 'r', 'LineWidth', 1.5);
+% xlabel('Spherical Harmonic Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
+% ylabel('Degree Power', 'Interpreter', 'latex', 'FontSize', 14);
+% legend('Original Model', 'Model B', 'Location', 'northeast');
+% title('Degree Power Spectrum Comparison', 'FontSize', 16);
+% grid on;
+
+%% Compute Root Mean Square
+RMS_A = sqrt(deg_power_A);
+RMS_B = sqrt(deg_power_B);
+RMS = sqrt(deg_power);
+
+figure;
+scatter(n_A.', RMS_A', 'b', 'LineWidth', 2); hold on;
+scatter(n_B.', RMS_B', 'r', 'LineWidth', 2);
+scatter(n_B.', RMS', 'g', 'LineWidth', 2);
+xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
+ylabel('Power Spectrum', 'Interpreter', 'latex', 'FontSize', 14);
+set(gca, 'YScale', 'log');
+set(gca, 'XScale', 'log');
+legend('Airy Model', 'Flexural Model', 'Observation');
 %title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
 grid on;
