@@ -18,7 +18,7 @@ load('bam.mat');
 
 % Load the spherical harmonics coefficients from the file
 filename = [HOME '/Data/ggmes_50v06_sha.tab'];
-maxDegree = 20;
+maxDegree = 30;
 % Spherical harmonic synthesis settings
 SHbounds = [1 maxDegree];
 height = 0;

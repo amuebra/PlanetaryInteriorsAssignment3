@@ -31,7 +31,7 @@ r_continent = h .* (rho_crust / (rho_mantle - rho_crust));
 crust_thickness = D + r_continent;
 
 %% --- Plot the results ---
-aa =18;
+aa =16;
 figure;
 imagesc(longitudes, latitudes, crust_thickness./1e3);  % Automatically scales axes
 set(gca, 'YDir', 'normal','Fontsize', aa);          % Flip Y so North is up

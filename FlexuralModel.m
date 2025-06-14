@@ -6,6 +6,7 @@ HOME = pwd;
 addpath([HOME '/Data']);
 addpath([HOME '/Results']);
 addpath([HOME '/Tools'])
+load('vik.mat');
 
 %% for Model 3
 load([HOME '/Results/Airy_thickness.mat'], 'crust_thickness')
@@ -20,7 +21,7 @@ latT = latLimT(1):latLimT(3):latLimT(2);
 LonT = repmat(lonT,length(latT),1);
 LatT = repmat(latT',1,length(lonT));
 
-aa = 18;
+aa = 16;
 figure
 imagesc(lonT,latT,crust_thickness./1e3);cc=colorbar;
 xlabel('Longitude (\circ)','Fontsize',aa)
@@ -52,17 +53,23 @@ mapf = GSHS(sc_flex,lonT,90-latT,179);
 %%
 figure
 imagesc(lonT,latT,mapf./1e3);cc=colorbar;
-xlabel('Longitude (\circ)','Interpreter', 'Latex', 'Fontsize',aa)
-ylabel('Latitude (\circ)','Interpreter', 'Latex','Fontsize',aa)
-ylabel(cc,'Flexural Crust Thickness (km)','Interpreter', 'Latex','Fontsize',aa)
-set(gca,'YDir','normal','Fontsize',aa)
+set(gca, 'YDir', 'normal','Fontsize', aa);          % Flip Y so North is up
+xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
+c = colorbar;
+ylabel(c, 'Flexural Crust Thickness (km)', 'Interpreter', 'latex', 'Fontsize', aa);
+c = colormap(vik);
+set(gca, 'ylim', [-90 90]);
+set(gca, 'ytick', -90:30:90);
+set(gca, 'xlim', [0 360]);
+set(gca, 'xtick', 0:30:360);
+axis equal tight;
+saveas(gcf, 'Figures/Flexural_Thickness.svg');
+
 
 figure
 imagesc(lonT,latT,(crust_thickness-mapf)./1e3);cc=colorbar;
-xlabel('Longitude (\circ)','Interpreter', 'Latex','Fontsize',aa)
-ylabel('Latitude (\circ)','Interpreter', 'Latex','Fontsize',aa)
-ylabel(cc,'Residual between Airy and Flexural (km)','Interpreter', 'Latex','Fontsize',aa)
-set(gca,'YDir','normal','Fontsize',aa)
+
 
 %% save
 % save also V_Model and insert it directly
