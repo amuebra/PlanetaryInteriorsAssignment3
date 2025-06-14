@@ -21,7 +21,7 @@ latT = latLimT(1):latLimT(3):latLimT(2);
 LonT = repmat(lonT,length(latT),1);
 LatT = repmat(latT',1,length(lonT));
 
-aa = 18;
+aa = 16;
 figure
 imagesc(lonT,latT,crust_thickness./1e3);cc=colorbar;
 xlabel('Longitude (\circ)','Fontsize',aa)
@@ -53,13 +53,6 @@ mapf = GSHS(sc_flex,lonT,90-latT,179);
 %%
 figure
 imagesc(lonT,latT,mapf./1e3);cc=colorbar;
-xlabel('Longitude (\circ)','Interpreter', 'Latex', 'Fontsize',aa)
-ylabel('Latitude (\circ)','Interpreter', 'Latex','Fontsize',aa)
-ylabel(cc,'Flexural Crust Thickness (km)','Interpreter', 'Latex','Fontsize',aa)
-set(gca,'YDir','normal','Fontsize',aa)
-
-figure
-imagesc(lonT,latT,(crust_thickness-mapf)./1e3);cc=colorbar;
 set(gca, 'YDir', 'normal','Fontsize', aa);          % Flip Y so North is up
 xlabel('Longitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
 ylabel('Latitude ($^\circ$)', 'Interpreter', 'latex', 'Fontsize', aa)
@@ -72,6 +65,11 @@ set(gca, 'xlim', [0 360]);
 set(gca, 'xtick', 0:30:360);
 axis equal tight;
 saveas(gcf, 'Figures/Flexural_Thickness.svg');
+
+
+figure
+imagesc(lonT,latT,(crust_thickness-mapf)./1e3);cc=colorbar;
+
 
 %% save
 % save also V_Model and insert it directly
