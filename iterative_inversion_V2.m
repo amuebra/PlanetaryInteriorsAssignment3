@@ -236,3 +236,5 @@ fprintf('Minimum thickness = %.4f meters\n', min(thickness(:)));
 %% save data
 %save([HOME '/Results/deltag_model_mGal.mat'], 'deltag_model_mGal', 'latT', 'lonT');
 %save([HOME '/Results/deltag_observagtion_mGal.mat'], 'deltag_observation_mGal', 'latT', 'lonT');
+V_Model_C = V_Model;
+save([HOME '/Results/coeffs_Bouguer.mat'], 'V_Model_C');

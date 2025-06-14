@@ -24,6 +24,7 @@ airy_thickness = crust_thickness;
 load([HOME '/Results/Flexural_thickness.mat'], 'mapf');
 flexural_crust_thickness = mapf;
 load([HOME '/Results/coeffs_obs.mat'], 'V');
+load([HOME '/Results/coeffs_Bouguer.mat'], 'V_Model_C');
 
 % Model Construction
 
@@ -139,44 +140,49 @@ set(gca, 'ytick', -90:30:90);
 %set(gca, 'xlim', [-180 180]);
 %set(gca, 'xtick', -180:30:180);
 
-
 %% Compute degree variance
 [n_A, DV_ModelA] = degreeVariance(V_Model);
 [n_B, DV_ModelB] = degreeVariance(V_Model_B);
+[n_C, DV_ModelC] = degreeVariance(V_Model_C);
 V = sortrows(V, [2, 1]);
 [n, DV] = degreeVariance(V);
 
 %% Plot the degree variance
-figure;
-plot(n_A.', DV_ModelA.', 'b', 'LineWidth', 2); hold on;
-plot(n_B.', DV_ModelB.', 'r', 'LineWidth', 2);
-plot(n_B.', DV.', 'g', 'LineWidth', 2);
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
+scatter(n_A.', DV_ModelA', 'b', 'LineWidth', 2); hold on;
+scatter(n_B.', DV_ModelB', 'r', 'LineWidth', 2);
+scatter(n_C.', DV_ModelC', 'g', 'LineWidth', 2);
+scatter(n.', DV', 'k', '^', 'LineWidth', 2);
 xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
 ylabel('Degree Variance', 'Interpreter', 'latex', 'FontSize', 14);
 set(gca, 'YScale', 'log');
 set(gca, 'XScale', 'log');
-legend('Airy Model', 'Flexural Model', 'Observation');
-title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
+legend('Airy Model', 'Flexural Model', 'Bouguer Model', 'Observation');
+% title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
 grid on;
+saveas(gcf, 'Figures/Degree_Variance.svg');
 
 %% Compute degree power spectrum
 deg_power_A = DV_ModelA ./ (2*n_A + 1);
 deg_power_B = DV_ModelB ./ (2*n_B + 1);
+deg_power_C = DV_ModelC ./ (2*n_C + 1);
 deg_power = DV ./ (2*n + 1);
 % deg_power_A_mGal = deg_power_A*1e5;
 % deg_power_B_mGal = deg_power_B*1e5;
 
-figure;
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 scatter(n_A.', deg_power_A', 'b', 'LineWidth', 2); hold on;
 scatter(n_B.', deg_power_B', 'r', 'LineWidth', 2);
-scatter(n_B.', deg_power', 'g', 'LineWidth', 2);
+scatter(n_C.', deg_power_C', 'g', 'LineWidth', 2);
+scatter(n.', deg_power', 'k', '^', 'LineWidth', 2);
 xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
 ylabel('Power Spectrum', 'Interpreter', 'latex', 'FontSize', 14);
 set(gca, 'YScale', 'log');
 set(gca, 'XScale', 'log');
-legend('Airy Model', 'Flexural Model', 'Observation');
+legend('Airy Model', 'Flexural Model', 'Bouguer Model', 'Observation');
 %title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
 grid on;
+saveas(gcf, 'Figures/Power_Spectrum.svg');
 
 % figure;
 % semilogy(degrees, deg_power, 'b', 'LineWidth', 1.5); hold on;
@@ -190,16 +196,19 @@ grid on;
 %% Compute Root Mean Square
 RMS_A = sqrt(deg_power_A);
 RMS_B = sqrt(deg_power_B);
+RMS_C = sqrt(deg_power_C);
 RMS = sqrt(deg_power);
 
-figure;
+figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 scatter(n_A.', RMS_A', 'b', 'LineWidth', 2); hold on;
 scatter(n_B.', RMS_B', 'r', 'LineWidth', 2);
-scatter(n_B.', RMS', 'g', 'LineWidth', 2);
+scatter(n_C.', RMS_C', 'g', 'LineWidth', 2);
+scatter(n.', RMS', 'k', '^', 'LineWidth', 2);
 xlabel('Degree $n$', 'Interpreter', 'latex', 'FontSize', 14);
-ylabel('Power Spectrum', 'Interpreter', 'latex', 'FontSize', 14);
+ylabel('Root Mean Square', 'Interpreter', 'latex', 'FontSize', 14);
 set(gca, 'YScale', 'log');
 set(gca, 'XScale', 'log');
-legend('Airy Model', 'Flexural Model', 'Observation');
+legend('Airy Model', 'Flexural Model', 'Bouguer Model', 'Observation');
 %title('Degree Variance Spectrum from Model SH Coefficients', 'FontSize', 14);
 grid on;
+saveas(gcf, 'Figures/Root_Mean_Square.svg');

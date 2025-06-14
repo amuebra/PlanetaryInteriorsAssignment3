@@ -76,7 +76,7 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [0 360]);
 set(gca, 'xtick', 0:30:360);
-saveas(gcf, 'figures/Bouguer_Anomaly.svg');
+saveas(gcf, 'Figures/Bouguer_Anomaly.svg');
 
 figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 imagesc(lonT, latT, deltag_mGal)
@@ -90,7 +90,7 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [0 360]);
 set(gca, 'xtick', 0:30:360);
-saveas(gcf, 'figures/Gravity_Anomaly.svg');
+saveas(gcf, 'Figures/Gravity_Anomaly.svg');
 
 figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 imagesc(lonT, latT, bouger_correction_mGal)
@@ -104,7 +104,7 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [0 360]);
 set(gca, 'xtick', 0:30:360);
-%saveas(gcf, 'figures/Bouguer_Correction.svg');
+%saveas(gcf, 'Figures/Bouguer_Correction.svg');
 
 figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
 imagesc(lonT, latT, elevations./1e3)
@@ -118,6 +118,6 @@ set(gca, 'ylim', [-90 90]);
 set(gca, 'ytick', -90:30:90);
 set(gca, 'xlim', [0 360]);
 set(gca, 'xtick', 0:30:360);
-%saveas(gcf, 'figures/Elevation.svg');
+%saveas(gcf, 'Figures/Elevation.svg');
 
 % plot_map(lonT, latT, elevations, 'Elevation (m)', 18, 12);
