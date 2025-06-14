@@ -7,7 +7,7 @@ clc;
 HOME = pwd;
 addpath([HOME '/Data']);
 addpath([HOME '/Results']);
-load('vik.mat');
+%load('vik.mat');
 
 % --- Load Topography Data ---
 load([HOME '/Results/elevations.mat'], 'elevations', 'longitudes', 'latitudes')  % Expects `elevations` defined (in meters)
