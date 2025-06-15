@@ -10,17 +10,10 @@ addpath([HOME '/Results'])
 addpath([HOME '/Tools']);
 
 % Load Data
-% tpl = load([HOME '/Results/elevations.mat'], 'elevations');
-% elevations = tpl.elevations;
+
 load([HOME '/Results/elevations.mat'], 'elevations');
-% amp = load([HOME '/Results/Airy_thickness.mat'], 'crust_thickness','longitudes', 'latitudes');
-% airy_thickness = amp.crust_thickness;
-% longitudes = amp.longitudes;
-% latitudes = amp.latitudes;
 load([HOME '/Results/Airy_thickness.mat'], 'crust_thickness','longitudes', 'latitudes');
 airy_thickness = crust_thickness;
-% fmp = load([HOME '/Results/Flexural_thickness.mat'], 'mapf');
-% flexural_crust_thickness = fmp.mapf;
 load([HOME '/Results/Flexural_thickness.mat'], 'mapf');
 flexural_crust_thickness = mapf;
 load([HOME '/Results/coeffs_obs.mat'], 'V');
@@ -53,7 +46,6 @@ if new_model == 1
   Model.l1.dens  = 2800;
   
   %% Second layer
-  %Model.l2.bound = -50000+Model.l1.bound;     % meters with respect to reference sphere ( or -50000.*ones(size(TOPO)) make a loop around Second layer fr M1 and M2
   Model.l2.bound = -airy_thickness;
   Model.l2.dens  = 3200;	   % Density in kg/m3
   

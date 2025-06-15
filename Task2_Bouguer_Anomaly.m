@@ -20,7 +20,7 @@ load([HOME '/Results/elevations.mat'], 'elevations')
 load([HOME '/Results/gravity_anomaly_mGal.mat'], 'delta_g_mGal')
 
 deltag_mGal = delta_g_mGal;
-lmax = 100;                         % Maximum degree/order
+lmax = 50;                         % Maximum degree/order
 R_ref = 2439.4e3;                     % Reference radius (km)
 GM = 22031.815e9;              % Mercury GM (km^3/s^2)
 G = 6.6743e-11;                     % gravitational constant
@@ -37,28 +37,34 @@ lonT = lonLimT(1):lonLimT(3):lonLimT(2);
 
 %% CALCULATE BOUGUER ANOMALY
 % -------------------------------------------------------------------------
+% Using Synthesis
 % two_layer_data = load([HOME '/Results/data_bouger_correction_0_50.mat']);
 % Model = two_layer_data.Model;
+% Data = two_layer_data.data;
+
+%gravity_free_air = deltag_mGal./1e5;
+%gravity_free_air(1, 3) = 0;  % Set first row, third column to zero, C_00
+%gravity_free_air(4, 3) = 0;  % Set fourth row, third column to zero, C_20
+%[free_air_gravity_data] = model_SH_synthesis(lonLim, latLim, height, SHbounds, gravity_free_air, Model1);
+%g_freeair = free_air_gravity_data.vec.R;
+%g_freeair_mGal = g_freeair * 1e5;  % convert to mGal
+
 % gravity_Model = two_layer_data.V_Model;
 % gravity_Model(1,3) = 0;
 % gravity_Model(3,3)=0;
 % new_gravity_Model = model_SH_synthesis(lonLimT, latLimT, height, SHbounds, gravity_Model, Model);
-% bouger_correction = new_gravity_Model.vec.R;
-% bouger_correction_mGal = flipud(bouger_correction) *1e5;
-% BA = deltag_mGal - bouger_correction_mGal; % Bouguer Anomaly in mGal
+% bouguer_correction = new_gravity_Model.vec.R;
+% g_bouguer_correction_SH_mGal = g_bouguer_correction_SH * 1e5;  % convert to mGal
+%BA = g_freeair_mGal - g_bouguer_correction_SH_mGAl;
 
-deltag_b = 2*pi*G*rho_crust*elevations; % Bouguer correction
 
-deltag_b_mGal = deltag_b * 1e5; % 1 m/s^2 = 1e5 mGal
-scaling_factor = size(deltag_b_mGal,1)/size(deltag_mGal,1);
 
-% deltag_b = 2*pi*G*rho_crust*elevations; % Bouguer correction
-% 
-% deltag_b_mGal = deltag_b * 1e5; % 1 m/s^2 = 1e5 mGal
-% scaling_factor = size(deltag_b_mGal,1)/size(deltag_mGal,1);
-% 
-deltag_b_mGal = downsize_mean(deltag_b_mGal, scaling_factor);
-BA = deltag_mGal-deltag_b_mGal;
+%Simpler approach similar results
+bouguer_correction = 2*pi*G*rho_crust*elevations; % Bouguer correction
+bouguer_correction_mGal = bouguer_correction * 1e5; % 1 m/s^2 = 1e5 mGal
+scaling_factor = size(bouguer_correction_mGal,1)/size(deltag_mGal,1);
+bouguer_correction_mGal = downsize_mean(bouguer_correction_mGal, scaling_factor);
+BA = deltag_mGal-bouguer_correction_mGal;
 
 % -------------------------------------------------------------------------
 %% PLOTTING
@@ -93,7 +99,7 @@ set(gca, 'xtick', 0:30:360);
 saveas(gcf, 'Figures/Gravity_Anomaly.svg');
 
 figure('units', 'points', 'Position', [0, 0, 455.2441, 0.5*455.2441]);
-imagesc(lonT, latT, bouger_correction_mGal)
+imagesc(lonT, latT, bouguer_correction_mGal)
 c = colorbar;
 colormap(broc);
 ylabel(c, 'Bouguer Correction (mGal)', 'Interpreter', 'latex', 'Fontsize', aa)

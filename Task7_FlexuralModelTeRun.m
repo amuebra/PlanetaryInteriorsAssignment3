@@ -41,7 +41,7 @@ sc = cs2sc(cs);                   % Convert to SH coefficients
 n = 1:size(sc, 1);                % Degrees
 
 %% Flexural Response for Different Te Values
-Te_values = [10e3, 20e3, 30e3, 40e3, 100e3];  % Elastic thicknesses to test [m]
+Te_values = [10e3, 20e3, 30e3, 40e3, 50e3];  % Elastic thicknesses to test [m]
 flex_maps = zeros(length(latT), length(lonT), length(Te_values));  % Store results
 
 for k = 1:length(Te_values)
@@ -51,9 +51,9 @@ for k = 1:length(Te_values)
     D = 100e9 * Te^3 / (12 * (1 - nu^2));
     
     % Flexural filter
-    %PHI = (1 + (D / (400 * 3.7)) .* (2 * (n + 1) / (2 * Model.Re)).^4) .^ (-1);
+    PHI = (1 + (D / (400 * 3.7)) .* (2 * (n + 1) / (2 * Model.Re)).^4) .^ (-1);
     R = 2439.4e3;
-    PHI = (1+D/(400*3.7).*(1/R.^4.*(n.*(n+1)-2).^2./(1-(1-nu.^2)./(n.*(n+1)))+12.*(1-nu)./(Te.^2.*R.^2)*(1-2./(n.*(n+1))./(1-(1-nu)./(n.*(n+1)))))).^(-1);
+    %PHI = (1+D/(400*3.7).*(1/R.^4.*(n.*(n+1)-2).^2./(1-(1-nu.^2)./(n.*(n+1)))+12.*(1-nu)./(Te.^2.*R.^2)*(1-2./(n.*(n+1))./(1-(1-nu)./(n.*(n+1)))))).^(-1);
 
     
     % Apply filter to SH coefficients

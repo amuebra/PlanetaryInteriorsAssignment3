@@ -41,10 +41,10 @@ sc = cs2sc(cs);
 n = 1:size(sc,1);
 nu = 0.25;
 R = 2439.4e3;
-D = 100e9*(Te)^3/(12*(1-nu^2)); % 200e9 Youngs Modulus, 100e3 Elastic Thickness T_e and oissons Ratio adapt for Mercury
-%PHI = (1 + (D)/(400*3.7).*(2.*(n+1)./(2*2439.4e3)).^4).^(-1); %9.81 changed to 3.7, radius changed from 6378 to what is 500 density difference 
-PHI = (1+D/(400*3.7).*(1/R.^4.*(n.*(n+1)-2).^2./(1-(1-nu.^2)./(n.*(n+1)))+12.*(1-nu)./(Te.^2.*R.^2)*(1-2./(n.*(n+1))./(1-(1-nu)./(n.*(n+1)))))).^(-1);
-% between mantle and crust
+D = 100e9*(Te)^3/(12*(1-nu^2)); 
+PHI = (1 + (D)/(400*3.7).*(2.*(n+1)./(2*2439.4e3)).^4).^(-1); %for infinite plate
+%PHI =
+%(1+D/(400*3.7).*(1/R.^4.*(n.*(n+1)-2).^2./(1-(1-nu.^2)./(n.*(n+1)))+12.*(1-nu)./(Te.^2.*R.^2)*(1-2./(n.*(n+1))./(1-(1-nu)./(n.*(n+1)))))).^(-1); 
 
 sc_flex = zeros(size(sc));
 
@@ -71,11 +71,6 @@ set(gca, 'xlim', [0 360]);
 set(gca, 'xtick', 0:30:360);
 axis equal tight;
 saveas(gcf, 'Figures/Flexural_Thickness.svg');
-
-
-figure
-imagesc(lonT,latT,(crust_thickness-mapf)./1e3);cc=colorbar;
-
 
 %% save
 % save also V_Model and insert it directly

@@ -7,16 +7,11 @@ clc;
 HOME = pwd;
 addpath([HOME '/Data']);
 addpath([HOME '/Results']);
-%load('vik.mat');
+load('vik.mat');
 
 % --- Load Topography Data ---
 load([HOME '/Results/elevations.mat'], 'elevations', 'longitudes', 'latitudes')  % Expects `elevations` defined (in meters)
 
-% %% --- Downsample topography early to save memory ---
-% h = elevations;
-% h = double(h);
-% step = 20;  % Keep every 20th point (adjust to fit your memory)
-% h = h(1:step:end, 1:step:end);  % Keep every 100th row and column
 
 %% --- Physical Parameters (adjust as needed) ---
 D = 36459;            % Crustal thickness in meters (e.g., 35 km)
